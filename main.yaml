@@ -1,0 +1,39 @@
+namespace: main
+includes:
+        - object_types
+
+metadata:
+        entrypoint: "main.main_room"
+
+objects:
+        blue_potion:
+                __type__: potion
+                desc: a small blue potion
+                effects:
+                        - name: Berserk
+                          duration: 8s
+                          effect_amount: +8
+                          effect_stat: force
+                          known: false
+
+        north_door:
+                __type__: room
+                desc: This is a dead end!
+
+        south_door:
+                __type__: room
+                desc: This is a dead end!
+
+        table:
+                __type__: container
+                desc: This is a wooken table, on it there is \{\}
+                items:
+                        - blue_potion
+
+        main_room:
+                __type__: room
+                desc: >
+                  You are in a small room carved in the stone,
+                  with a [table {}table] at the center.
+                   - There is a [south_door {}door at the south] of the room 
+                   - There is another [north_door {}door at the north]
