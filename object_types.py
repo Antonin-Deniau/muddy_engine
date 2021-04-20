@@ -1,5 +1,17 @@
 import muddy
 
+class Player:
+    def __init__(self, world, name):
+        self.previous_location = None
+        self.location = world.get_metadata("entrypoint")
+        self.world = world
+        self.name = name
+        self.action = None
+
+    def move(self, new_location):
+        self.previous_location = self.location.split('.')[-1]
+        self.location = new_location.split('.')[-1]
+
 class Room:
     def __init__(self, data_file, desc):
         [desc, objs] = muddy.parse(desc)
@@ -8,70 +20,63 @@ class Room:
         self.objs = objs
 
 
-    def draw(self, gamestate):
-        back = gamestate["previous_location"] if "previous_location" in gamestate else None
+    def draw(self, player):
+        keys = [e.key for e in self.objs]
+        locs = [*keys, player.previous_location] if player.previous_location != None else keys
 
         print(self.desc)
-
-        keys = [e.key for e in self.objs]
-        locs = [*keys, back] if back != None else keys
         print("locations: {}".format(", ".join(locs)))
 
-    def update(self, gamestate):
-        back = gamestate["previous_location"] if "previous_location" in gamestate else None
-        action = gamestate["action"]
+    def update(self, player):
+        back = player.previous_location
+        action = player.action
 
         if len(action) == 2 and action[0] == "go":
             if action[1] in [e.key for e in self.objs]:
                 loc = "{}.{}".format(self.ns, action[1])
 
-                gamestate["previous_location"] = gamestate["location"].split('.')[-1]
-                gamestate["location"] = action[1].split(':')[-1]
+                player.move(action[1])
                 print("You walk to {}".format(action[1]))
-                return gamestate
+                return
 
             if back != None and (action[1] == back or action[1] == "back"):
-                gamestate["previous_location"] = gamestate["location"]
-                gamestate["location"] = back
+                player.move(back)
                 print("You walk to {}".format(back))
-                return gamestate
+                return
 
             print("Unknown location")
-            return gamestate
+            return
 
         print("Unknown comand")
-        return gamestate
 
 
 class Container:
-    def __init__(self, data_file, desc, items={}):
-        [desc, objs] = muddy.parse(desc)
+    def __init__(self, data_file, desc):
+        [desc, items] = muddy.parse(desc)
         self.items = items
         self.desc = desc
 
-    def draw(self, gamestate):
-        back = gamestate["previous_location"] if "previous_location" in gamestate else None
+    def draw(self, player):
+        back = player.previous_location
 
         print(self.desc)
         if back:
             print("locations: {}".format(back))
 
-    def update(self, gamestate):
-        back = gamestate["previous_location"] if "previous_location" in gamestate else None
-        action = gamestate["action"]
+    def update(self, player):
+        back = player.previous_location
+        action = player.action
 
         if len(action) == 2 and action[0] == "go":
             if back != None and (action[1] == back or action[1] == "back"):
-                gamestate["previous_location"] = gamestate["location"]
-                gamestate["location"] = back
+                player.move(back)
                 print("You walk to {}".format(back))
-                return gamestate
+                return
 
             print("Unknown location")
-            return gamestate
+            return
 
         print("Unknown command")
-        return gamestate
 
 
 class Item:
@@ -86,4 +91,5 @@ classes = {
         "container": Container,
         "item": Item,
         "potion": Potion,
+        "player": Player,
 }

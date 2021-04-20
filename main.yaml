@@ -26,9 +26,7 @@ objects:
 
         table:
                 __type__: container
-                desc: This is a wooken table, on it there is \{\}
-                items:
-                        - blue_potion
+                desc: This is a wooden table, on it there is [blue_potion {}a blue potion]
 
         main_room:
                 __type__: room

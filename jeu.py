@@ -26,29 +26,21 @@ def save(prev_h_len, histfile):
 atexit.register(save, h_len, histfile)
 
 
-
-world = ObjFile(sys.argv[1])
-
-gamestate = {
-    "previous_location": None,
-    "location": world.get_metadata("entrypoint"),
-    "world": world,
-}
-
-
-players = {
-        "antonin": gamestate,
-}
-
 async def repl():
-    global players
+    world = ObjFile(sys.argv[1])
+
     player_name = "antonin"
 
+    players = {
+            "antonin": world.get_class("player")(world, "antonin"),
+    }
+
     while True:
-        loc = world.get_object(players[player_name]["location"])
+        player = players[player_name]
 
+        loc = world.get_object(player.location)
 
-        loc.draw(gamestate)
+        loc.draw(player)
 
         cmd = list(shlex.shlex(input(">")))
         if not len(cmd):
@@ -57,8 +49,8 @@ async def repl():
         if cmd[0] == "exit":
             break
 
-        players[player_name]["action"] = cmd
-        players[player_name] = loc.update(players[player_name])
+        player.action = cmd
+        loc.update(player)
 
     return True
 
