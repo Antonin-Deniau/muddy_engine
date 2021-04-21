@@ -4,9 +4,11 @@ import sys
 import atexit
 import json
 import os
-import readline
 import traceback
 import shlex
+from pyreadline import Readline
+readline = Readline()
+
 
 from core import ObjFile
 
@@ -22,7 +24,7 @@ except FileNotFoundError:
 def save(prev_h_len, histfile):
     new_h_len = readline.get_current_history_length()
     readline.set_history_length(1000)
-    readline.append_history_file(new_h_len - prev_h_len, histfile)
+    #readline.append_history_file(new_h_len - prev_h_len, histfile)
 atexit.register(save, h_len, histfile)
 
 
@@ -39,6 +41,7 @@ async def repl():
         player = players[player_name]
 
         loc = world.get_object(player.location)
+        loc.load(player)
 
         loc.draw(player)
 

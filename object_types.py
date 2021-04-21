@@ -9,39 +9,47 @@ class Player:
         self.action = None
 
     def move(self, new_location):
-        self.previous_location = self.location.split('.')[-1]
-        self.location = new_location.split('.')[-1]
+        self.previous_location = self.location
+        self.location = new_location
 
 class Room:
-    def __init__(self, data_file, desc):
+    def __init__(self, data_file, name, desc):
         [desc, objs] = muddy.parse(desc)
         self.ns = data_file.namespace
         self.desc = desc
-        self.objs = objs
-
+        self.name = name
+        self.objs = { k.key.split(".")[-1]: { "entity": data_file.get_object(k.key), "desc": k.vals } for k in objs }
+        self.players = {}
+    
+    def move_player(self, player, dest):
+        del self.players[player.name]
+        player.move(dest)
 
     def draw(self, player):
-        keys = [e.key for e in self.objs]
-        locs = [*keys, player.previous_location] if player.previous_location != None else keys
+        keys = self.objs.keys()
 
+        locs = [*keys, "back"] if player.previous_location != None else keys
         print(self.desc)
+        print("Peoples in the room: {}".format(", ".join(self.players.keys())))
         print("locations: {}".format(", ".join(locs)))
+        
+    def load(self, player):
+        self.players[player.name] = player
 
     def update(self, player):
         back = player.previous_location
         action = player.action
 
         if len(action) == 2 and action[0] == "go":
-            if action[1] in [e.key for e in self.objs]:
-                loc = "{}.{}".format(self.ns, action[1])
+            if action[1] in self.objs.keys():
+                loc = self.objs[action[1]]
 
-                player.move(action[1])
-                print("You walk to {}".format(action[1]))
+                self.move_player(player, loc["entity"].name)
+                print("You walk to {}".format(loc["desc"]))
                 return
 
-            if back != None and (action[1] == back or action[1] == "back"):
-                player.move(back)
-                print("You walk to {}".format(back))
+            if back != None or action[1] == "back":
+                self.move_player(player, back)
                 return
 
             print("Unknown location")
@@ -51,26 +59,26 @@ class Room:
 
 
 class Container:
-    def __init__(self, data_file, desc):
+    def __init__(self, data_file, name, desc):
         [desc, items] = muddy.parse(desc)
+        self.name = name
         self.items = items
         self.desc = desc
-
+        
+    def load(self, player):
+        pass
+    
     def draw(self, player):
-        back = player.previous_location
-
         print(self.desc)
-        if back:
-            print("locations: {}".format(back))
+        print("locations: back")
 
     def update(self, player):
         back = player.previous_location
         action = player.action
 
         if len(action) == 2 and action[0] == "go":
-            if back != None and (action[1] == back or action[1] == "back"):
+            if back != None and action[1] == "back":
                 player.move(back)
-                print("You walk to {}".format(back))
                 return
 
             print("Unknown location")
@@ -83,7 +91,7 @@ class Item:
     pass
 
 class Potion(Item):
-    def __init__(self, data_file, desc, effects):
+    def __init__(self, data_file, name, desc, effects):
         pass
 
 classes = {

@@ -55,7 +55,7 @@ class ObjFile:
 
     def load_import_python(self, i, name):
         foo = importlib.import_module(i)
-        self.classes = self.classes | self.ns_dict(foo.classes)
+        self.classes = {**self.classes, **self.ns_dict(foo.classes)}
 
     def load_import_yaml(self, i):
         pass
@@ -78,7 +78,7 @@ class ObjFile:
             t = v["__type__"]
             del v["__type__"]
             try:
-                self.objects[k] = self.get_class(t)(self, **v)
+                self.objects[k] = self.get_class(t)(self, **{**{ "name": k }, **v})
             except Exception as e:
                 raise Exception("{} while instantiating {}".format(e, t))
 
