@@ -22,9 +22,19 @@ class User(Base):
 class UserRepository:
     def __init__(self):
         self.session = Session()
+        self.salt = bcrypt.gensalt(rounds=16)
 
     def fetch_user(self, name):
         return self.session.query(User).filter(User.name == name).one_or_none()
+
+    def generate_password(self, p):
+        return bcrypt.hashpw(p, self.salt.decode())
+
+    def create_user(self, name, email, password, nick):
+        user = User(name=name, email=email, password=self.generate_password(password), nick=nick)
+        self.session.add(user)
+        self.session.commit()
+        return user
 
 
 user_repository = UserRepository()
