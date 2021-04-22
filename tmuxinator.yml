@@ -1,0 +1,10 @@
+name: muddy
+root: .
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+              - ./muddy-client.py cli --frame=chat        127.0.0.1:8080
+              - ./muddy-client.py cli --frame=description 127.0.0.1:8080
+  - server:
+    - python ./muddy-server.py 127.0.0.1 8080 main.yml

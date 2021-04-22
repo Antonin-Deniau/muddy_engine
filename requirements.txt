@@ -1,0 +1,6 @@
+prompt_toolkit
+bcrypt
+sqlalchemy
+websockets
+lark
+docopt
