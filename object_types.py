@@ -1,4 +1,4 @@
-import parser
+import muddy_parser
 
 class Player:
     def __init__(self, world, name):
@@ -14,7 +14,7 @@ class Player:
 
 class Room:
     def __init__(self, data_file, name, desc):
-        [desc, objs] = parser.parse(desc)
+        [desc, objs] = muddy_parser.parse(desc)
         self.ns = data_file.namespace
         self.desc = desc
         self.name = name
@@ -60,7 +60,7 @@ class Room:
 
 class Container:
     def __init__(self, data_file, name, desc):
-        [desc, items] = parser.parse(desc)
+        [desc, items] = muddy_parser.parse(desc)
         self.name = name
         self.items = items
         self.desc = desc
