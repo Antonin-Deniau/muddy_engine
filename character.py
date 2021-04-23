@@ -1,18 +1,26 @@
-import bcrypt
+from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String
 from persist import Base, Session
-from sqlalchemy.orm import relationship
 
-class User(Base):
-    __tablename__ = 'users'
+class C(Base):
+    def __init__(self, world, name):
+        self.previous_location = None
+        self.location = world.get_metadata("entrypoint")
+        self.world = world
+        self.name = name
+        self.action = None
+
+    def move(self, new_location):
+        self.previous_location = self.location
+        self.location = new_location
+
+
+class Character(Base):
+    __tablename__ = 'characters'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    email = Column(String)
-    nickname = Column(String)
-    password = Column(String)
-    
-    characters = relationship("Player", back_populates="user")
+    user = relationship("User")
 
     def verify_password(self, password):
         pwhash = bcrypt.hashpw(password, self.password)
@@ -22,13 +30,13 @@ class User(Base):
        return "<User(name='{}', fullname='{}', nickname='{}')>".format(self.name, self.email, self.nickname)
 
 
-class UserRepository:
+class CharacterRepository:
     def __init__(self):
         self.session = Session()
         self.salt = bcrypt.gensalt(rounds=16)
 
-    def fetch_user(self, name):
-        return self.session.query(User).filter(User.name == name).one_or_none()
+    def fetch_user(self, user):
+        return self.session.query(Player).filter(Player.user == user).all()
 
     def generate_password(self, p):
         return bcrypt.hashpw(p.encode("utf-8"), self.salt)

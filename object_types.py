@@ -1,16 +1,5 @@
 import muddy_parser
 
-class Player:
-    def __init__(self, world, name):
-        self.previous_location = None
-        self.location = world.get_metadata("entrypoint")
-        self.world = world
-        self.name = name
-        self.action = None
-
-    def move(self, new_location):
-        self.previous_location = self.location
-        self.location = new_location
 
 class Room:
     def __init__(self, data_file, name, desc):

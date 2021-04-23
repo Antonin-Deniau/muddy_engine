@@ -18,20 +18,17 @@ from utils import send_command, read_command
 from auth import auth_page
 from core import ObjFile
 from persist import migrate
+from player import player_repository
 
 async def main(ws, path):
     global world, players
 
-    player = await auth_page(ws)
+    user = await auth_page(ws)
+    player = await choose_player(user)
 
-    if not logged_in:
-        return
-
-    player = players[player_name]
-    #world.get_class("player")(world, "antonin")
+    world.get_class("player")(world, "antonin")
 
     while True:
-
         loc = world.get_object(player.location)
         loc.load(player)
 

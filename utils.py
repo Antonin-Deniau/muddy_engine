@@ -10,22 +10,3 @@ async def read_command(ws):
 
 async def prn(ws, data):
     await send_command(ws, "prn", data)
-
-async def get_word(ws):
-    while True:
-        data = await read_command(ws)
-
-        try: 
-            if data["type"] != "cmd":
-                if data["type"] == "exit":
-                    raise ExitEx
-
-                raise ClientEx("Invalid command type")
-
-            if len(data["content"]) == 0:
-                raise ClientEx("You must enter some text")
-
-            return data["content"][0]
-        except ClientEx as e:
-            await prn(ws, str(e))
-
