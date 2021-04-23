@@ -35,7 +35,6 @@ async def login(ws, content):
 
 
 async def register(ws, content):
-    print(content)
     if len(content) != 5: raise ClientEx("Invalid arguments: /login <name> \"<email>\" <nick> \"<pass>\" \"<pass confirmation>\"")
 
     if content[3] != content[4]:
