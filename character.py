@@ -14,7 +14,7 @@ class Character(Base):
     user = relationship("User")
 
     #Transcient properties
-    def __init__(self)
+    def __init__(self):
         self.action = None
         self.world = None
 

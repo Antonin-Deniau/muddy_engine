@@ -18,39 +18,60 @@ from utils import send_command, read_command, prn
 from auth import auth_page
 from core import ObjFile
 from persist import migrate
+from exceptions import ClientEx
+from character import character_repository
 
-async def choose_character(ws, user):
+
+async def create_character(ws, content):
+    if len(content) != 2: raise ClientEx("Invalid arguments: /create <name>")
+    return character_repository.create_character(content[0], content[1])
+
+async def choose_character(ws, content):
+    pass
+
+async def manage_character(ws, user):
     while True:
         if len(user.characters) != 0:
-            await prn(ws, "Please choose your character, or create one with \"/create <name> <nick>\": ")
+            await prn(ws, "Please choose your character with \"/choose <name>\", or create one with \"/create <name> <nick>\": ")
             for char in user.characters:
                 await prn(ws, "\t- {}: {}".format(char.name, char.nick))
 
+            while True:
+                cmd = await read_command(ws)
+
+                try:
+                    if cmd["type"] == "create":
+                        await create_character(ws, cmd["content"])
+                    elif cmd["type"] == "choose":
+                        return await choose_character(ws, cmd["content"])
+                    else:
+                        raise ClientEx("Invalid command")
+
+                except ClientEx as e:
+                    await prn(ws, str(e))
+
         else:
             await prn(ws, "Create a character with \"/create <name>\": ")
+            cmd = await read_command(ws)
+            await create_character(ws, cmd)
 
-            await create_characte(ws, )
 
-async def create_character(ws, content):
-    if len(content) != 5: raise ClientEx("Invalid arguments: /login <name> \"<email>\" <nick> \"<pass>\" \"<pass confirmation>\"")
+args = docopt(__doc__, version='0.1')
 
-    if content[3] != content[4]:
-        raise ClientEx("Password does not match.")
-
-    return user_repository.create_user(content[0], content[1], content[2], content[3])
-
+world = ObjFile(args["<file>"])
+if args["--migrate"]: migrate()
 
 async def main(ws, path):
-    global world, players
+    global world
 
     user = await auth_page(ws)
-    character = await choose_character(ws, user)
+    character = await manage_character(ws, user)
 
     while True:
-        loc = world.get_object(player.location)
-        loc.load(player)
+        loc = world.get_object(character.location)
+        loc.load(character)
 
-        loc.draw(player)
+        loc.draw(character)
 
         data = await read_command(ws)
 
@@ -60,24 +81,14 @@ async def main(ws, path):
             if not len(cmd):
                 continue
 
-            player.action = cmd
-            loc.update(player)
-            
+            character.set_action(cmd)
+            loc.update(character)
+
         if data["type"] == "exit":
             break
 
+start_server = websockets.serve(main, args["<host>"], args["<port>"])
 
-if __name__ == '__main__':
-    args = docopt(__doc__, version='0.1')
-
-    world = ObjFile(args["<file>"])
-    players = {
-    }
-
-    if args["--migrate"]: migrate()
-
-    start_server = websockets.serve(main, args["<host>"], args["<port>"])
-
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
 
