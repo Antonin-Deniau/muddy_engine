@@ -88,5 +88,4 @@ classes = {
         "container": Container,
         "item": Item,
         "potion": Potion,
-        "player": Player,
 }

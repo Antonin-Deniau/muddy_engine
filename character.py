@@ -1,9 +1,9 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from persist import Base, Session
 
 class Character(Base):
-    __tablename__ = 'characters'
+    __tablename__ = 'character'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -11,7 +11,9 @@ class Character(Base):
     previous_location = Column(String)
     location = Column(String)
 
-    user = relationship("User")
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship("User", back_populates="characters")
+
 
     #Transcient properties
     def __init__(self):

@@ -4,7 +4,7 @@ from persist import Base, Session
 from sqlalchemy.orm import relationship
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -12,7 +12,7 @@ class User(Base):
     nickname = Column(String)
     password = Column(String)
     
-    characters = relationship("Player", back_populates="user")
+    characters = relationship("Character", back_populates="user")
 
     def verify_password(self, password):
         pwhash = bcrypt.hashpw(password, self.password)
