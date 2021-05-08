@@ -1,7 +1,8 @@
 import bcrypt
 from sqlalchemy import Column, Integer, String
-from persist import Base, Session
+from persist import Base, session
 from sqlalchemy.orm import relationship
+from exceptions import ClientEx
 
 class User(Base):
     __tablename__ = 'user'
@@ -15,6 +16,8 @@ class User(Base):
     characters = relationship("Character", back_populates="user")
 
     def verify_password(self, password):
+        print(self.password)
+        print(password)
         pwhash = bcrypt.hashpw(password, self.password)
         return self.password == pwhash
 
@@ -24,7 +27,7 @@ class User(Base):
 
 class UserRepository:
     def __init__(self):
-        self.session = Session()
+        self.session = session
         self.salt = bcrypt.gensalt(rounds=16)
 
     def fetch_user(self, name):
@@ -32,8 +35,20 @@ class UserRepository:
 
     def generate_password(self, p):
         return bcrypt.hashpw(p.encode("utf-8"), self.salt)
+    
+    def name_exist(self, name):
+        return self.session.query(User.id).filter_by(name=name).first() is not None
+
+    def email_exist(self, email):
+        return self.session.query(User.id).filter_by(email=email).first() is not None
 
     def create_user(self, name, email, password, nick):
+        if self.email_exist(email):
+            raise ClientEx("Email already exist")
+
+        if self.name_exist(name):
+            raise ClientEx("Name already exist")
+
         user = User(name=name, email=email, password=self.generate_password(password), nickname=nick)
         self.session.add(user)
         self.session.commit()

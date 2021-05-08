@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey
-from persist import Base, Session
+from persist import Base, session
 
 class Character(Base):
     __tablename__ = 'character'
@@ -16,9 +16,20 @@ class Character(Base):
 
 
     #Transcient properties
-    def __init__(self):
+    def __init__(self, **kwargs):
+        #self.action = kwargs['location']
+        #kwargs.pop('location')
+
         self.action = None
+        self.location = ""
+        self.previous_location = ""
         self.world = None
+        
+        self.name = kwargs["name"]
+        self.nick = kwargs["nick"]
+        self.user = kwargs["user"]
+        self.previous_location = kwargs["previous_location"]
+        self.location = kwargs["location"]
 
     def set_action(self, action):
         self.action = action
@@ -35,6 +46,12 @@ class Character(Base):
 
 class CharacterRepository:
     def __init__(self):
-        self.session = Session()
+        self.session = session
+    
+    def create_character(self, name, nick, user, previous_location, location):
+        char = Character(name=name, nick=nick, user=user, previous_location=previous_location, location=location)
+        self.session.add(char)
+        self.session.commit()
+        return char
 
 character_repository = CharacterRepository()

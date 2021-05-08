@@ -20,40 +20,45 @@ from core import ObjFile
 from persist import migrate
 from exceptions import ClientEx
 from character import character_repository
+from user import user_repository
 
 
-async def create_character(ws, content):
-    if len(content) != 2: raise ClientEx("Invalid arguments: /create <name>")
-    return character_repository.create_character(content[0], content[1])
+async def create_character(ws, user, content):
+    if len(content) != 2: raise ClientEx("Invalid arguments: /create <name> <nick>")
+    return character_repository.create_character(content[0], content[1], user, "", "")
 
 async def choose_character(ws, content):
     pass
 
 async def manage_character(ws, user):
     while True:
-        if len(user.characters) != 0:
-            await prn(ws, "Please choose your character with \"/choose <name>\", or create one with \"/create <name> <nick>\": ")
-            for char in user.characters:
-                await prn(ws, "\t- {}: {}".format(char.name, char.nick))
+        #user_repository.session.refresh(user)
 
-            while True:
-                cmd = await read_command(ws)
+        try:
+            if len(user.characters) != 0:
+                await prn(ws, "Please choose your character with \"/choose <name>\", or create one with \"/create <name> <nick>\": ")
+                for char in user.characters:
+                    await prn(ws, "\t- {}: {}".format(char.name, char.nick))
 
-                try:
+                    cmd = await read_command(ws)
+
                     if cmd["type"] == "create":
-                        await create_character(ws, cmd["content"])
+                        await create_character(ws, user, cmd["content"])
                     elif cmd["type"] == "choose":
                         return await choose_character(ws, cmd["content"])
                     else:
                         raise ClientEx("Invalid command")
 
-                except ClientEx as e:
-                    await prn(ws, str(e))
+            else:
+                await prn(ws, "Create a character with \"/create <name> <nick>\": ")
+                cmd = await read_command(ws)
+                if cmd["type"] == "create":
+                    await create_character(ws, user, cmd["content"])
+                else:
+                    raise ClientEx("Invalid command")
 
-        else:
-            await prn(ws, "Create a character with \"/create <name>\": ")
-            cmd = await read_command(ws)
-            await create_character(ws, cmd)
+        except ClientEx as e:
+            await prn(ws, str(e))
 
 
 args = docopt(__doc__, version='0.1')
