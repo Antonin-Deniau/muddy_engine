@@ -1,7 +1,7 @@
-from .core.utils import read_command, prn
-from .service.user import user_service
+from core.utils import read_command, prn
+from service.user import user_service
 
-from exceptions import ClientEx
+from core.exceptions import ClientEx
 
 async def auth_interface(ws):
     await prn(ws, "Welcome to [Themud], to login type \"/login <name> <pass>\" To register \"/register\"")

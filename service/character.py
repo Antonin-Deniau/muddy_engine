@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey
-from .core.persist import Base, session
+from core.persist import Base, session
 
 class Character(Base):
     __tablename__ = 'character'

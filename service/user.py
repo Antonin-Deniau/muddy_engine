@@ -2,8 +2,8 @@ import bcrypt
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 
-from .core.exceptions import ClientEx
-from .core.persist import Base, session
+from core.exceptions import ClientEx
+from core.persist import Base, session
 
 class User(Base):
     __tablename__ = 'user'

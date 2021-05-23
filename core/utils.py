@@ -1,5 +1,5 @@
 import json
-from exceptions import ClientEx, ExitEx
+from core.exceptions import ClientEx, ExitEx
 
 
 async def send_command(ws, t, content):
