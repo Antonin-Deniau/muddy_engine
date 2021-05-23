@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy import Column, Integer, String, ForeignKey
-from persist import Base, session
+from .core.persist import Base, session
 
 class Character(Base):
     __tablename__ = 'character'
@@ -44,7 +44,7 @@ class Character(Base):
         return self.world
 
 
-class CharacterRepository:
+class CharacterService:
     def __init__(self):
         self.session = session
     
@@ -54,4 +54,4 @@ class CharacterRepository:
         self.session.commit()
         return char
 
-character_repository = CharacterRepository()
+character_service = CharacterService()

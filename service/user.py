@@ -1,8 +1,9 @@
 import bcrypt
 from sqlalchemy import Column, Integer, String
-from persist import Base, session
 from sqlalchemy.orm import relationship
-from exceptions import ClientEx
+
+from .core.exceptions import ClientEx
+from .core.persist import Base, session
 
 class User(Base):
     __tablename__ = 'user'
@@ -25,7 +26,7 @@ class User(Base):
        return "<User(name='{}', fullname='{}', nickname='{}')>".format(self.name, self.email, self.nickname)
 
 
-class UserRepository:
+class UserService:
     def __init__(self):
         self.session = session
         self.salt = bcrypt.gensalt(rounds=16)
@@ -55,4 +56,4 @@ class UserRepository:
         return user
 
 
-user_repository = UserRepository()
+user_service = UserService()

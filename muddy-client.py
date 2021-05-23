@@ -23,7 +23,7 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 
 from utils import send_command, read_command
 
-histfile = os.path.abspath(os.path.basename('~/.muddy_history'))
+histfile = os.path.abspath('~/.muddy_history')
 
 async def send_inputs(ws):
     session = PromptSession(history=FileHistory(histfile))

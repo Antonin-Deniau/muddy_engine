@@ -1,75 +1,37 @@
 #!/usr/bin/env python
 """Server for the Muddy MUD framework
 Usage:
-  muddy-server [--migrate] <host> <port> <file>
+  muddy-server [--migrate] <host> <port> <world_folder>
   muddy-server -h | --help
   muddy-server --version
 Options:
-  -h --help  Show this help
-  --version  Show the program version
-  <host>     The host of the server
-  <port>     The port of the server
-  <file>     The main file of the game
+  -h --help       Show this help
+  --version       Show the program version
+  <host>          The host of the server
+  <port>          The port of the server
+  <world_folder>  The world folder for the game
 """
 from docopt import docopt
 import asyncio
 import websockets
-from utils import send_command, read_command, prn
-from auth import auth_page
-from core import ObjFile
-from persist import migrate
-from exceptions import ClientEx
-from character import character_repository
-from user import user_repository
 
+from core.utils import read_command
+from core.world import World
+from core.persist import migrate
 
-async def create_character(ws, user, content):
-    if len(content) != 2: raise ClientEx("Invalid arguments: /create <name> <nick>")
-    return character_repository.create_character(content[0], content[1], user, "", "")
-
-async def choose_character(ws, content):
-    pass
-
-async def manage_character(ws, user):
-    while True:
-        #user_repository.session.refresh(user)
-
-        try:
-            if len(user.characters) != 0:
-                await prn(ws, "Please choose your character with \"/choose <name>\", or create one with \"/create <name> <nick>\": ")
-                for char in user.characters:
-                    await prn(ws, "\t- {}: {}".format(char.name, char.nick))
-
-                    cmd = await read_command(ws)
-
-                    if cmd["type"] == "create":
-                        await create_character(ws, user, cmd["content"])
-                    elif cmd["type"] == "choose":
-                        return await choose_character(ws, cmd["content"])
-                    else:
-                        raise ClientEx("Invalid command")
-
-            else:
-                await prn(ws, "Create a character with \"/create <name> <nick>\": ")
-                cmd = await read_command(ws)
-                if cmd["type"] == "create":
-                    await create_character(ws, user, cmd["content"])
-                else:
-                    raise ClientEx("Invalid command")
-
-        except ClientEx as e:
-            await prn(ws, str(e))
+from controller.auth import auth_interface
+from controller.character import manage_character
 
 
 args = docopt(__doc__, version='0.1')
 
-world = ObjFile(args["<file>"])
+world = World(args["<world_folder>"])
 if args["--migrate"]: migrate()
 
 async def main(ws, path):
     global world
 
-    user = await auth_page(ws)
+    user = await auth_interface(ws)
     character = await manage_character(ws, user)
 
     while True:
