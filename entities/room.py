@@ -1,11 +1,12 @@
+from core.muddy_parser import parse
 
 class Room:
-    def __init__(self, data_file, name, desc):
-        [desc, objs] = muddy_parser.parse(desc)
-        self.ns = data_file.namespace
+    def __init__(self, world, name, desc):
+        [desc, objs] = parse(desc)
+        self.world = world
         self.desc = desc
         self.name = name
-        self.objs = { k.key.split(".")[-1]: { "entity": data_file.get_object(k.key), "desc": k.vals } for k in objs }
+        self.objs = objs
         self.players = {}
     
     def move_player(self, player, dest):
@@ -29,7 +30,7 @@ class Room:
 
         if len(action) == 2 and action[0] == "go":
             if action[1] in self.objs.keys():
-                loc = self.objs[action[1]]
+                loc = world.get_location(self.objs[action[1]])
 
                 self.move_player(player, loc["entity"].name)
                 print("You walk to {}".format(loc["desc"]))

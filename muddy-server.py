@@ -29,8 +29,6 @@ world = World(args["<world_folder>"])
 if args["--migrate"]: migrate()
 
 async def main(ws, path):
-    global world
-
     user = await auth_interface(ws)
     character = await manage_character(ws, user)
 

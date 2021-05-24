@@ -1,2 +1,2 @@
 metadata:
-        entrypoint: "main.main_room"
+  entrypoint: "main.main_room"
