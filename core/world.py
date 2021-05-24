@@ -34,6 +34,10 @@ class World():
         for key, value in containers.items():
             self.containers[key] = value
 
+    def _load_metadata(self, metadata):
+        for key, value in metadata.items():
+            self.metadata[key] = value
+
     def get_location(self, loc):
         if loc in self.rooms.keys():
             return self.rooms[loc]
@@ -42,3 +46,9 @@ class World():
             return self.containers[loc]
 
         raise ClientEx("Unknown location: {}".format(loc))
+
+    def get_metadata(self, key)
+        if key in self.metadata.keys():
+            return self.metadata[key]
+        else:
+            return None

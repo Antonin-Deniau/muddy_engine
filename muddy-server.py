@@ -33,7 +33,7 @@ async def main(ws, path):
     character = await manage_character(ws, user)
 
     while True:
-        loc = world.get_object(character.location)
+        loc = world.get_location(character.location)
         loc.load(character)
 
         loc.draw(character)
