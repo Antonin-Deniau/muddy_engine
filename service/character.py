@@ -31,6 +31,11 @@ class Character(Base):
         self.previous_location = kwargs["previous_location"]
         self.location = kwargs["location"]
 
+
+    def move(self, location):
+        self.previous_location = self.location
+        self.location = location
+
     def set_action(self, action):
         self.action = action
     

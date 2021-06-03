@@ -34,10 +34,10 @@ class Room:
                 loc = self.world.get_location(action[1])
 
                 self.move_player(player, loc.name)
-                await prn(ws, "You walk to {}".format(loc.desc))
+                await prn(ws, "You walk to {}".format(loc.name))
                 return
 
-            if back != None or action[1] == "back":
+            if back != None and action[1] == "back":
                 self.move_player(player, back)
                 return
 
