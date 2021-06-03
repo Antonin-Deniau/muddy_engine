@@ -1,4 +1,5 @@
 from core.muddy_parser import parse
+from core.utils import prn
 
 class Room:
     def __init__(self, world, name, desc):
@@ -13,35 +14,35 @@ class Room:
         del self.players[player.name]
         player.move(dest)
 
-    def draw(self, player):
-        keys = self.objs.keys()
+    async def draw(self, ws, player):
+        keys = [x.key for x in self.objs]
 
         locs = [*keys, "back"] if player.previous_location != None else keys
-        print(self.desc)
-        print("Peoples in the room: {}".format(", ".join(self.players.keys())))
-        print("locations: {}".format(", ".join(locs)))
+        await prn(ws, self.desc)
+        await prn(ws, "Peoples in the room: {}".format(", ".join(self.players.keys())))
+        await prn(ws, "locations: {}".format(", ".join(locs)))
         
-    def load(self, player):
+    async def load(self, ws, player):
         self.players[player.name] = player
 
-    def update(self, player):
+    async def update(self, ws, player):
         back = player.previous_location
         action = player.action
 
         if len(action) == 2 and action[0] == "go":
-            if action[1] in self.objs.keys():
-                loc = world.get_location(self.objs[action[1]])
+            if action[1] in [x.key for x in self.objs]:
+                loc = self.world.get_location(action[1])
 
-                self.move_player(player, loc["entity"].name)
-                print("You walk to {}".format(loc["desc"]))
+                self.move_player(player, loc.name)
+                await prn(ws, "You walk to {}".format(loc.desc))
                 return
 
             if back != None or action[1] == "back":
                 self.move_player(player, back)
                 return
 
-            print("Unknown location")
+            await prn(ws, "Unknown location")
             return
 
-        print("Unknown comand")
+        await prn(ws, "Unknown comand")
 

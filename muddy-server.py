@@ -22,7 +22,6 @@ from core.persist import migrate
 from controller.auth import auth_interface
 from controller.character import manage_character
 
-
 args = docopt(__doc__, version='0.1')
 
 world = World(args["<world_folder>"])
@@ -34,9 +33,9 @@ async def main(ws, path):
 
     while True:
         loc = world.get_location(character.location)
-        loc.load(character)
+        await loc.load(ws, character)
 
-        loc.draw(character)
+        await loc.draw(ws, character)
 
         data = await read_command(ws)
 
@@ -47,7 +46,7 @@ async def main(ws, path):
                 continue
 
             character.set_action(cmd)
-            loc.update(character)
+            await loc.update(ws, character)
 
         if data["type"] == "exit":
             break

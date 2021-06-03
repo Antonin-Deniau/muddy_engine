@@ -9,7 +9,8 @@ async def create_character(ws, user, content):
     return character_service.create_character(content[0], content[1], user, "starting_hub", "starting_hub")
 
 async def choose_character(ws, user, content):
-    pass
+    if len(content) != 1: raise ClientEx("Invalid arguments: /choose <name>")
+    return character_service.find_character(user, content[0])
 
 async def manage_character(ws, user):
     while True:

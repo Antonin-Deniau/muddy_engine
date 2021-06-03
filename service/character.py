@@ -54,4 +54,12 @@ class CharacterService:
         self.session.commit()
         return char
 
+    def find_character(self, user, name):
+        char = self.session.query(Character).filter(Character.name == name, Character.user == user).one_or_none()
+
+        if name == None:
+            raise ClientEx("Character does not exist")
+
+        return char
+
 character_service = CharacterService()

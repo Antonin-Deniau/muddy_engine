@@ -16,14 +16,16 @@ from pathlib import Path
 import websockets
 import shlex
 import os
+
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.patch_stdout import patch_stdout
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 
-from utils import send_command, read_command
+from core.utils import send_command, read_command
 
-histfile = os.path.abspath('~/.muddy_history')
+home = Path.home()
+histfile = os.path.abspath(os.path.join(Path.home(), '.muddy_history'))
 
 async def send_inputs(ws):
     session = PromptSession(history=FileHistory(histfile))

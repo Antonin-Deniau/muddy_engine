@@ -1,19 +1,21 @@
+from core.muddy_parser import parse
+from core.utils import prn
 
 class Container:
-    def __init__(self, data_file, name, desc):
-        [desc, items] = muddy_parser.parse(desc)
+    def __init__(self, world, name, desc):
+        [desc, items] = parse(desc)
         self.name = name
         self.items = items
         self.desc = desc
         
-    def load(self, player):
+    async def load(self, ws, player):
         pass
     
-    def draw(self, player):
-        print(self.desc)
-        print("locations: back")
+    async def draw(self, ws, player):
+        await prn(ws, self.desc)
+        await prn(ws, "locations: back")
 
-    def update(self, player):
+    async def update(self, ws, player):
         back = player.previous_location
         action = player.action
 
@@ -22,7 +24,7 @@ class Container:
                 player.move(back)
                 return
 
-            print("Unknown location")
+            await prn(ws, "Unknown location")
             return
 
-        print("Unknown command")
+        await prn(ws, "Unknown command")

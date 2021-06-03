@@ -35,7 +35,7 @@ async def login(ws, content):
 
 
 async def register(ws, content):
-    if len(content) != 5: raise ClientEx("Invalid arguments: /login <name> \"<email>\" <nick> \"<pass>\" \"<pass confirmation>\"")
+    if len(content) != 5: raise ClientEx("Invalid arguments: /register <name> \"<email>\" <nick> \"<pass>\" \"<pass confirmation>\"")
 
     if content[3] != content[4]:
         raise ClientEx("Password does not match.")

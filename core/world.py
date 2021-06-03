@@ -1,6 +1,8 @@
 import yaml, os, glob
 
 from core.exceptions import ClientEx
+from entities.container import Container
+from entities.room import Room
 
 yaml.warnings({'YAMLLoadWarning': False})
 
@@ -26,13 +28,20 @@ class World():
                 self._load_containers(value)
                 continue
 
+            if key == "metadata":
+                self._load_metadata(value)
+
     def _load_rooms(self, rooms):
         for key, value in rooms.items():
-            self.rooms[key] = value
+            value["name"] = key
+            value["world"] = self
+            self.rooms[key] = Room(**value)
 
-    def _load_container(self, containers):
+    def _load_containers(self, containers):
         for key, value in containers.items():
-            self.containers[key] = value
+            value["name"] = key
+            value["world"] = self
+            self.containers[key] = Container(**value)
 
     def _load_metadata(self, metadata):
         for key, value in metadata.items():
@@ -47,7 +56,7 @@ class World():
 
         raise ClientEx("Unknown location: {}".format(loc))
 
-    def get_metadata(self, key)
+    def get_metadata(self, key):
         if key in self.metadata.keys():
             return self.metadata[key]
         else:

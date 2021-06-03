@@ -3,7 +3,7 @@ potion:
     desc: a small blue potion
     effects:
       - name: Berserk
-      duration: 8s
-      effect_amount: +8
-      effect_stat: force
-      known: false
+        duration: 8s
+        effect_amount: +8
+        effect_stat: force
+        known: false
