@@ -17,3 +17,4 @@ class Character(Base):
     user = relationship("User", back_populates="characters")
 
     scripts = relationship("Script", back_populates="owner")
+    exits = relationship("Exit", back_populates="owner")

@@ -31,24 +31,21 @@ from controller.admin import admin
 
 args = docopt(__doc__, version='0.1')
 
-if args["--migrate"]: migrate()
+if args["--migrate"]:
+    migrate()
+    room_service.init()
 
 banner = "Welcome to Muddy Engine!"
-
-# Init fixtures
-def init_data():
-    room_service.init()
 
 async def main(ws, path):
     await prn(ws, banner)
 
     user = await auth_interface(ws)
     char = await manage_character(ws, user)
+    await char.room.run(ws, char)
 
     action = None
     while True:
-        await char.room.exec(ws, char)
-
         data = await read_command(ws)
 
         if data["type"] == "exit": # Exit the server
@@ -64,8 +61,6 @@ async def main(ws, path):
         except ClientEx as e:
             await prn(ws, str(e))
 
-
-init_data()
 
 start_server = websockets.serve(main, args["<host>"], args["<port>"])
 
