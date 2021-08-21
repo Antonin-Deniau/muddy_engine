@@ -5,10 +5,6 @@ class ScriptService:
     def __init__(self):
         self.session = session
 
-    def list(self, char):
-        return char.scripts
-
-
     def set_property(self, char, id, key, value):
         script = self.session.query(Script).filter(Script.id == id).one_or_none()
 

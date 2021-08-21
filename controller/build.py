@@ -21,22 +21,17 @@ async def build_list(ws, char, data):
         args = data["content"]
 
         if args[0] == "room":
-            rooms = room_service.list(char)
-
             await prn(ws, "Owned rooms:")
-            for room in rooms:
+            for room in char.rooms:
                 await prn(ws, "\t- [#{}] {}".format(room.id, room.name))
         elif args[0] == "exit":
-            exits = exit_service.list(char.room)
-
             await prn(ws, "Owned exits:")
-            for exit in exits:
+            for exit in char.exits:
                 await prn(ws, "\t- [#{}] {}".format(exit.id, exit.name))
         elif args[0] == "script":
-            scripts = script_service.list(char)
 
             await prn(ws, "Owned scripts:")
-            for script in scripts:
+            for script in char.scripts:
                 await prn(ws, "\t- [#{}] {}".format(script.id, script.name))
         elif args[0] == "object":
             pass

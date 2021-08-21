@@ -1,20 +1,19 @@
 from core.persist import session
+from core.exceptions import ClientEx
 from entities.exit import Exit
+from entities.room import Room
 
 
 class ExitService:
     def __init__(self):
         self.session = session
 
-    def list(self, room):
-        return room.exits
-
     def create(self, char, name):
         exit = Exit(name=name, owner=char, entry=char.room)
 
         self.session.add(exit)
         self.session.commit()
-        return script
+        return exit
 
     def set_property(self, char, id, key, value):
         exit = self.session.query(Exit).filter(Exit.id == id).one_or_none()

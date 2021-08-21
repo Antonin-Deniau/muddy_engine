@@ -14,6 +14,7 @@ class Exit(Base):
     exit = relationship("Room", back_populates="exits", foreign_keys=[exit_id])
 
     owner_id = Column(Integer, ForeignKey('character.id'))
-    owner = relationship("Character", back_populates="exits")
+    owner = relationship("Character", back_populates="exits", foreign_keys=[owner_id])
 
     desc = Column(String)
+    name = Column(String)

@@ -1,19 +1,19 @@
 from core.persist import session
 from entities.room import Room
 
+from core.exceptions import ClientEx
+
 class RoomService():
     def __init__(self):
         self.session = session
 
-    def list(self, char):
-        return char.rooms
-
     def create(self, char, name):
+        print(char, name)
         room = Room(name=name, owner=char)
 
         self.session.add(room)
         self.session.commit()
-        return script
+        return room
 
     def set_property(self, char, id, key, value):
         room = self.session.query(Room).filter(Room.id == id).one_or_none()
