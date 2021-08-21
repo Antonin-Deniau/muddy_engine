@@ -18,3 +18,4 @@ class Character(Base):
 
     scripts = relationship("Script", back_populates="owner")
     exits = relationship("Exit", back_populates="owner")
+    rooms = relationship("Room", back_populates="owner")

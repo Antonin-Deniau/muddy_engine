@@ -21,6 +21,8 @@ class Room(Base):
     exits = relationship("Exit", back_populates="exit", foreign_keys=[Exit.exit_id])
     entries = relationship("Exit", back_populates="entry", foreign_keys=[Exit.entry_id])
 
+    owner = relationship("Character", back_populates="rooms")
+
 
     async def run(self, ws, char):
         await prn(ws, self.desc)
