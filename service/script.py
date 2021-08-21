@@ -5,15 +5,19 @@ class ScriptService:
     def __init__(self):
         self.session = session
 
-    def set_property(self, id, key, value):
-        char = self.session.query(Script).filter(Script.id == id).one_or_none()
+    def list(self, char):
+        return char.scripts
 
-        if char == None: raise ClientEx("Script not found with id: {}".format(id))
+
+    def set_property(self, char, id, key, value):
+        script = self.session.query(Script).filter(Script.id == id).one_or_none()
+
+        if script == None: raise ClientEx("Script not found with id: {}".format(id))
 
         if key == "name":
-            char.name = value
+            script.name = value
         elif key == "code":
-            char.code = value
+            script.code = value
         else:
             raise ClientEx("Invalid property: {}".format(key))
 
