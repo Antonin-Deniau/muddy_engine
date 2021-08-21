@@ -9,11 +9,11 @@ async def build(ws, user, data):
     if data["type"] == "chmod":  pass
     if data["type"] == "delete": pass
     if data["type"] == "rename": pass
-    if data["type"] == "create": async build_create(ws, user, data)
-    if data["type"] == "set":    async build_set(ws, user, data)
+    if data["type"] == "create": await build_create(ws, user, data)
+    if data["type"] == "set":    await build_set(ws, user, data)
 
 
-async build_create(ws, user, data):
+async def build_create(ws, user, data):
     if len(data["content"]) != 2:
         raise ClientEx("Invalid arguments: /create [room|script|object] <name>")
     else:
