@@ -9,6 +9,7 @@ class Character(Base):
     name = Column(String)
     nick = Column(String)
     desc = Column(String)
+
     room_id = Column(Integer, ForeignKey('room.id'))
     room = relationship("Room", back_populates="characters")
 

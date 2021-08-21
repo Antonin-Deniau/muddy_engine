@@ -1,5 +1,6 @@
 from core.persist import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 
 import lupa
 from lupa import LuaRuntime
@@ -13,8 +14,9 @@ class Room(Base):
     code = Column(String)
 
     parent_id = Column(Integer, ForeignKey('room.id'))
-    parent = relationship("Room", back_populates="rooms")
-    rooms = relationship("Room", back_populates="parent")
+    parent = relationship("Room", remote_side=[id], backref='rooms')
+
+    characters = relationship("Character", back_populates="room")
 
     # Transcient properties
     def __init__(self, **kwargs):

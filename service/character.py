@@ -1,4 +1,5 @@
 from core.persist import session
+from entities.room import Room
 from entities.character import Character
 
 class CharacterService:
@@ -9,7 +10,7 @@ class CharacterService:
         char = Character(name=name,
                          nick=nick,
                          user=user,
-                         room=self.session.query(Room).filter(Room.id = 0).one_or_none())
+                         room=self.session.query(Room).filter(Room.id == 0).one_or_none())
 
         self.session.add(char)
         self.session.commit()
