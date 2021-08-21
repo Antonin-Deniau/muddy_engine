@@ -17,6 +17,7 @@ import websockets
 
 from core.utils import read_command, prn
 from core.persist import migrate
+from core.exceptions import ClientEx
 
 from service.room import room_service
 
@@ -50,11 +51,18 @@ async def main(ws, path):
 
         data = await read_command(ws)
 
-        await admin(ws, data)
-        await build(ws, data)
-        await room(ws, data)
-        await actions(ws, data)
-        await script(ws, data)
+        if data["type"] == "exit": # Exit the server
+            break
+        
+        try:
+            await admin(ws, user, data)
+            await build(ws, user, data)
+            await room(ws, user, data)
+            await actions(ws, user, data)
+            await script(ws, user, data)
+
+        except ClientEx as e:
+            await prn(ws, str(e))
 
 
 init_data()

@@ -3,7 +3,7 @@ from core.utils import read_command, prn
 from core.exceptions import ClientEx
 
 
-async def script(ws, data):
+async def script(ws, user, data):
     if data["type"] == "copy_script":    # Copy script
         pass
     if data["type"] == "detach_script":  # detach script from obj/room/char
