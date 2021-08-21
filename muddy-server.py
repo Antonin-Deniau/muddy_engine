@@ -43,11 +43,11 @@ async def main(ws, path):
     await prn(ws, banner)
 
     user = await auth_interface(ws)
-    character = await manage_character(ws, user)
+    char = await manage_character(ws, user)
 
     action = None
     while True:
-        await character.room.exec(ws, character)
+        await char.room.exec(ws, char)
 
         data = await read_command(ws)
 
@@ -55,11 +55,11 @@ async def main(ws, path):
             break
         
         try:
-            await admin(ws, user, data)
-            await build(ws, user, data)
-            await room(ws, user, data)
-            await actions(ws, user, data)
-            await script(ws, user, data)
+            await admin(ws, char, data)
+            await build(ws, char, data)
+            await room(ws, char, data)
+            await actions(ws, char, data)
+            await script(ws, char, data)
 
         except ClientEx as e:
             await prn(ws, str(e))

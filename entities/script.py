@@ -11,5 +11,6 @@ class Script(Base):
     perms = Column(Integer)
     code = Column(String)
 
-    owner = relationship("Character", remote_side=[id] backref="scripts")
+    owner_id = Column(Integer, ForeignKey('character.id'))
+    owner = relationship("Character", back_populates="scripts")
 

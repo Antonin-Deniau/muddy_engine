@@ -16,3 +16,4 @@ class Character(Base):
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship("User", back_populates="characters")
 
+    scripts = relationship("Script", back_populates="owner")
