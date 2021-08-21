@@ -5,6 +5,30 @@ from sqlalchemy.orm import relationship
 import lupa
 from lupa import LuaRuntime
 
+"""
+def getter(obj, attr_name):
+     if attr_name == 'yes':
+         return getattr(obj, attr_name)
+     raise AttributeError(
+         'not allowed to read attribute "%s"' % attr_name)
+
+def setter(obj, attr_name, value):
+     if attr_name == 'put':
+         setattr(obj, attr_name, value)
+         return
+     raise AttributeError(
+         'not allowed to write attribute "%s"' % attr_name)
+
+class X(object):
+     yes = 123
+     put = 'abc'
+     noway = 2.1
+
+x = X()
+
+lua = lupa.LuaRuntime(attribute_handlers=(getter, setter))
+"""
+
 class Room(Base):
     __tablename__ = 'room'
 
@@ -32,3 +56,5 @@ class Room(Base):
         run = rt.eval(self.code)
         if run != None:
             return run(ws, name)
+
+

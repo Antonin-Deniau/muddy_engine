@@ -47,7 +47,7 @@ async def send_inputs(ws):
         else:
             cmd = list(shlex.shlex(raw))
 
-            await send_command(ws, "cmd", cmd)
+            await send_command(ws, "say", cmd)
 
 
 async def main():

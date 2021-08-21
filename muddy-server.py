@@ -34,21 +34,41 @@ async def main(ws, path):
     user = await auth_interface(ws)
     character = await manage_character(ws, user)
 
+    action = None
     while True:
         await character.room.exec(ws, character)
 
         data = await read_command(ws)
 
-        if data["type"] == "cmd":
-            cmd = data["content"]
+        if data["type"] == "dig":     # Create a room
+            pass
+        if data["type"] == "link":    # Link a room to another one
+            pass
+        if data["type"] == "drop":    # Drop something in the room
+            pass
+        if data["type"] == "take":    # Take something from the room
+            pass
+        if data["type"] == "give":    # Give something to someone
+            pass
+        if data["type"] == "say":     # Say something in public
+            pass
+        if data["type"] == "whisper": # Say something in private
+            pass
+        if data["type"] == "move":    # Move player to another room
+            pass
+        if data["type"] == "copy":    # copy script
+            pass
+        if data["type"] == "detach":  # detach script from obj
+            pass
+        if data["type"] == "attach":  # attach script to obj
+            pass
+        if data["type"] == "upload":  # create script
+            pass
+        if data["type"] == "save":    # Save my character
+            pass
 
-            if not len(cmd):
-                continue
 
-            character.set_action(cmd)
-            await loc.update(ws, character)
-
-        if data["type"] == "exit":
+        if data["type"] == "exit":    # Exit the server
             break
 
 init_data()

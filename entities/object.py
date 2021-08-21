@@ -1,2 +1,3 @@
 
-class Object:
+class Object(Base):
+    pass
