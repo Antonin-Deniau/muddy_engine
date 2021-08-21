@@ -2,6 +2,7 @@ from core.utils import read_command, prn
 
 from core.exceptions import ClientEx
 
+from service.character import character_service
 
 async def actions(ws, user, data):
     if data["type"] == "drop":      # Drop something in the room
@@ -13,7 +14,7 @@ async def actions(ws, user, data):
     if data["type"] == "whisper":   # Say something in private
         pass
     if data["type"] == "move":      # Move player to another room
-        pass
+        await character_service.move_character(ws, user, data)
     if data["type"] == "inventory": # Inspect inventory
         pass
     if data["type"] == "save":      # Save my character

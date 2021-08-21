@@ -1,6 +1,7 @@
 from core.exceptions import ClientEx
 from core.persist import session
 from entities.room import Room
+from entities.exit import Exit
 from entities.character import Character
 
 class CharacterService:
@@ -25,5 +26,20 @@ class CharacterService:
             raise ClientEx("Character does not exist")
 
         return char
+
+    async def move_character(self, ws, user, data):
+        args = data["content"]
+
+        exit = self.session.query(Exit).filter(Exit.id == args[0]).one_or_none()
+        if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
+
+        for script in exit.scripts:
+            pass
+        
+        user.room = exit.exit
+        await user.room.run(ws, user)
+
+        self.session.commit()
+        
 
 character_service = CharacterService()

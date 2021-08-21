@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 
 # Many to Many requirements
 from entities.script_to_room import ScriptToRoom
+from entities.script_to_exit import ScriptToExit
 
 import lupa
 from lupa import LuaRuntime
@@ -21,6 +22,7 @@ class Script(Base):
     owner = relationship("Character", back_populates="scripts")
 
     rooms = relationship('Room', secondary = 'script_to_room')
+    exits = relationship('Exit', secondary = 'script_to_exit')
 
     async def run_in_room(self, ws, name):
         rt = LuaRuntime(unpack_returned_tuples=True)

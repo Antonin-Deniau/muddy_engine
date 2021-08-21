@@ -16,5 +16,7 @@ class Exit(Base):
     owner_id = Column(Integer, ForeignKey('character.id'))
     owner = relationship("Character", back_populates="exits", foreign_keys=[owner_id])
 
+    scripts = relationship('Script', secondary = 'script_to_exit')
+
     desc = Column(String)
     name = Column(String)
