@@ -19,7 +19,7 @@ class ScriptService:
         elif key == "code":
             script.code = value
         else:
-            raise ClientEx("Invalid property: {}".format(key))
+            raise ClientEx("Invalid property: {} (Available: name, code)".format(key))
 
         self.session.commit()
 
