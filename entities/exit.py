@@ -1,5 +1,5 @@
 from core.persist import Base
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 class Exit(Base):

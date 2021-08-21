@@ -3,7 +3,7 @@ from core.exceptions import ClientEx
 
 from service.script import script_service
 from service.room import room_service
-from service.room import exit_service
+from service.exit import exit_service
 
 
 async def build(ws, char, data):

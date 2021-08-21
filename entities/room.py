@@ -4,6 +4,8 @@ from core.persist import Base
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
+from entities.exit import Exit
+
 class Room(Base):
     __tablename__ = 'room'
 
