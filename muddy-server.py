@@ -51,6 +51,8 @@ async def main(ws, path):
         if data["type"] == "exit":
             break
 
+init_data()
+
 start_server = websockets.serve(main, args["<host>"], args["<port>"])
 
 asyncio.get_event_loop().run_until_complete(start_server)

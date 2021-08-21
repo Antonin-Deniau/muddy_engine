@@ -6,7 +6,7 @@ from core.exceptions import ClientEx
 
 async def create_character(ws, user, content):
     if len(content) != 2: raise ClientEx("Invalid arguments: /create <name> <nick>")
-    return character_service.create_character(content[0], content[1], user, "starting_hub", "starting_hub")
+    return character_service.create_character(content[0], content[1], user)
 
 async def choose_character(ws, user, content):
     if len(content) != 1: raise ClientEx("Invalid arguments: /choose <name>")
