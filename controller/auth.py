@@ -4,7 +4,7 @@ from service.user import user_service
 from core.exceptions import ClientEx
 
 async def auth_interface(ws):
-    await prn(ws, "Welcome to [Themud], to login type \"/login <name> <pass>\" To register \"/register\"")
+    await prn(ws, "To login type \"/login <name> <pass>\" To register \"/register\"")
 
     while True:
         cmd = await read_command(ws)

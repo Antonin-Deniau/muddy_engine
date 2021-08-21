@@ -27,10 +27,15 @@ args = docopt(__doc__, version='0.1')
 
 if args["--migrate"]: migrate()
 
+banner = "Welcome to Muddy Engine!"
+
+# Init fixtures
 def init_data():
     room_service.init()
 
 async def main(ws, path):
+    await prn(ws, banner)
+
     user = await auth_interface(ws)
     character = await manage_character(ws, user)
 
@@ -40,61 +45,67 @@ async def main(ws, path):
 
         data = await read_command(ws)
 
-        # object perms: inspect/modify
-        # room perms:   visit/modify
-        # script perms: inspect/modify
-        # owners: UGO
 
-        if data["type"] == "say":     # Say something in public
-            await prn(ws, user.name + " just said: " + str(data["content"]))
-
-        # TO IMPLEMENT
+        # Administration
         if data["type"] == "ban":    # Ban a user
             pass
         if data["type"] == "priv":    # Change user privilege
-            pass
-        if data["type"] == "deletegrp": # Delete a group
-            pass
-        if data["type"] == "listgrp": # List groups
-            pass
-        if data["type"] == "creategrp": # Create a group
-            pass
-        if data["type"] == "grprm":   # Remove user from group
-            pass
-        if data["type"] == "grpadd":  # Add user to group
             pass
         if data["type"] == "chown":   # Change owner of an object/room/script
             pass
         if data["type"] == "chmod":   # Change perms of an object/room/script
             pass
-        if data["type"] == "dig":     # Create a room
+
+
+        # Room
+        if data["type"] == "room_create": # Create a room
             pass
-        if data["type"] == "link":    # Link a room to another one
+        if data["type"] == "room_link":   # Link a room to another one
             pass
-        if data["type"] == "drop":    # Drop something in the room
-            pass
-        if data["type"] == "take":    # Take something from the room
-            pass
-        if data["type"] == "give":    # Give something to someone
-            pass
-        if data["type"] == "whisper": # Say something in private
-            pass
-        if data["type"] == "move":    # Move player to another room
-            pass
-        if data["type"] == "copy":    # Copy script
-            pass
-        if data["type"] == "detach":  # detach script from obj/room/exit
-            pass
-        if data["type"] == "attach":  # attach script to obj/room/exit
-            pass
-        if data["type"] == "upload":  # Create or update a script
-            pass
-        if data["type"] == "save":    # Save my character
+        if data["type"] == "room_del":    # Delete a room
             pass
 
 
-        if data["type"] == "exit":    # Exit the server
+        # Actions
+        if data["type"] == "drop":      # Drop something in the room
+            pass
+        if data["type"] == "take":      # Take something from the room
+            pass
+        if data["type"] == "give":      # Give something to someone
+            pass
+        if data["type"] == "whisper":   # Say something in private
+            pass
+        if data["type"] == "move":      # Move player to another room
+            pass
+        if data["type"] == "inventory": # Inspect inventory
+            pass
+        if data["type"] == "save":      # Save my character
+            pass
+        if data["type"] == "exit":      # Exit the server
             break
+        if data["type"] == "say":       # Say something in public
+            await prn(ws, user.name + " just said: " + str(data["content"]))
+
+
+        # Script
+        if data["type"] == "script_copy":    # Copy script
+            pass
+        if data["type"] == "script_detach":  # detach script from obj/room/char
+            pass
+        if data["type"] == "script_attach":  # attach script to obj/room/char
+            pass
+        if data["type"] == "script_destroy": # destroy obj/room/char/script
+            pass
+        if data["type"] == "script_rename":  # destroy obj/room/char/script
+            pass
+        if data["type"] == "script_upload":  # Create or update a script
+            data = base64.b64decode(content["data"])
+            name = content["name"]
+            try:
+                script_service.create_or_update(name, data)
+            except ClientEx as e:
+                await prn(ws, str(e))
+
 
 init_data()
 
