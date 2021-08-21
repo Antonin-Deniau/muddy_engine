@@ -22,6 +22,11 @@ from service.room import room_service
 
 from controller.auth import auth_interface
 from controller.character import manage_character
+from controller.actions import actions
+from controller.build import build
+from controller.room import room
+from controller.script import script
+from controller.admin import admin
 
 args = docopt(__doc__, version='0.1')
 
@@ -45,66 +50,11 @@ async def main(ws, path):
 
         data = await read_command(ws)
 
-
-        # Administration
-        if data["type"] == "ban":    # Ban a user
-            pass
-        if data["type"] == "priv":    # Change user privilege
-            pass
-        if data["type"] == "chown":   # Change owner of an object/room/script
-            pass
-        if data["type"] == "chmod":   # Change perms of an object/room/script
-            pass
-
-
-        # Room
-        if data["type"] == "room_create": # Create a room
-            pass
-        if data["type"] == "room_link":   # Link a room to another one
-            pass
-        if data["type"] == "room_del":    # Delete a room
-            pass
-
-
-        # Actions
-        if data["type"] == "drop":      # Drop something in the room
-            pass
-        if data["type"] == "take":      # Take something from the room
-            pass
-        if data["type"] == "give":      # Give something to someone
-            pass
-        if data["type"] == "whisper":   # Say something in private
-            pass
-        if data["type"] == "move":      # Move player to another room
-            pass
-        if data["type"] == "inventory": # Inspect inventory
-            pass
-        if data["type"] == "save":      # Save my character
-            pass
-        if data["type"] == "exit":      # Exit the server
-            break
-        if data["type"] == "say":       # Say something in public
-            await prn(ws, user.name + " just said: " + str(data["content"]))
-
-
-        # Script
-        if data["type"] == "script_copy":    # Copy script
-            pass
-        if data["type"] == "script_detach":  # detach script from obj/room/char
-            pass
-        if data["type"] == "script_attach":  # attach script to obj/room/char
-            pass
-        if data["type"] == "script_destroy": # destroy obj/room/char/script
-            pass
-        if data["type"] == "script_rename":  # destroy obj/room/char/script
-            pass
-        if data["type"] == "script_upload":  # Create or update a script
-            data = base64.b64decode(content["data"])
-            name = content["name"]
-            try:
-                script_service.create_or_update(name, data)
-            except ClientEx as e:
-                await prn(ws, str(e))
+        await admin(ws, data)
+        await build(ws, data)
+        await room(ws, data)
+        await actions(ws, data)
+        await script(ws, data)
 
 
 init_data()

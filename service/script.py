@@ -11,12 +11,12 @@ class ScriptService(Base):
             if script == None:
                 raise ClientEx("Invalid id for script: {}".format(name[1:]))
             else:
-                self.update_script(script, name, data)
+                self.update_script(script, data)
         else:
             self.create_script(name, data)
 
 
-    def update_script(self, name, data):
+    def update_script(self, script, data):
         pass
 
     def create_script(self, name, data):
