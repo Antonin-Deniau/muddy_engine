@@ -16,26 +16,26 @@ import asyncio
 import websockets
 
 from core.utils import read_command
-from core.world import World
 from core.persist import migrate
+
+from service.room import room_service
 
 from controller.auth import auth_interface
 from controller.character import manage_character
 
 args = docopt(__doc__, version='0.1')
 
-world = World(args["<world_folder>"])
 if args["--migrate"]: migrate()
+
+def init_data():
+    room_service.init()
 
 async def main(ws, path):
     user = await auth_interface(ws)
     character = await manage_character(ws, user)
 
     while True:
-        loc = world.get_location(character.location)
-        await loc.load(ws, character)
-
-        await loc.draw(ws, character)
+        await character.room.exec(ws, character)
 
         data = await read_command(ws)
 

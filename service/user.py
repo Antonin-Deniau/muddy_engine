@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from core.exceptions import ClientEx
 from core.persist import Base, session
 
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -13,13 +14,12 @@ class User(Base):
     email = Column(String)
     nickname = Column(String)
     password = Column(String)
+    salt = Column(String)
     
     characters = relationship("Character", back_populates="user")
 
     def verify_password(self, password):
-        print(self.password)
-        print(password)
-        pwhash = bcrypt.hashpw(password, self.password)
+        pwhash = bcrypt.hashpw(password.encode("utf-8"), self.salt)
         return self.password == pwhash
 
     def __repr__(self):
@@ -29,13 +29,12 @@ class User(Base):
 class UserService:
     def __init__(self):
         self.session = session
-        self.salt = bcrypt.gensalt(rounds=16)
 
     def fetch_user(self, name):
         return self.session.query(User).filter(User.name == name).one_or_none()
 
-    def generate_password(self, p):
-        return bcrypt.hashpw(p.encode("utf-8"), self.salt)
+    def generate_password(self, p, salt):
+        return bcrypt.hashpw(p.encode("utf-8"), salt)
     
     def name_exist(self, name):
         return self.session.query(User.id).filter_by(name=name).first() is not None
@@ -50,7 +49,9 @@ class UserService:
         if self.name_exist(name):
             raise ClientEx("Name already exist")
 
-        user = User(name=name, email=email, password=self.generate_password(password), nickname=nick)
+        salt = bcrypt.gensalt(rounds=16)
+
+        user = User(name=name, email=email, salt=salt, password=self.generate_password(password, salt), nickname=nick)
         self.session.add(user)
         self.session.commit()
         return user
