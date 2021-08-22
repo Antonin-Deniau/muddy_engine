@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship
 from entities.script_to_room import ScriptToRoom
 from entities.script_to_exit import ScriptToExit
 
-from cmud import exec, create_blank_env, load_str
+from cmud.cmud import exec, create_blank_env, load_str
 
 class Script(Base):
     __tablename__ = 'script'
@@ -61,10 +61,10 @@ def on_load(target, context):
         env = create_blank_env()
 
         load_str("(defmacro! defun (fn* [name args func] `(def! ~name (fn* ~args ~func))))", env)
-        load_str("(defmacro! . (fn* [tools key & args] `(~key ~tools ~@args)))", env)
+        load_str("(defmacro! # (fn* [tools key & args] `(~key ~tools ~@args)))", env)
 
         try:
-            target.hooks = exec(env, "(do" + target.code.decode("utf-8") + ")")
+            target.hooks = exec("(do " + target.code.decode("utf-8") + "\n)", env)
         except Exception as e:
             print(e)
             target.error = str(e)
