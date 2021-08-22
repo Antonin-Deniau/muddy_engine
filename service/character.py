@@ -6,6 +6,8 @@ from entities.character import Character
 from core.exceptions import ClientEx
 
 
+
+import traceback
 from service.room import room_service
 
 class CharacterService:
@@ -40,19 +42,21 @@ class CharacterService:
         if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
 
         try:
-            await user.room.room_leave(ws, user)
+            await user.room.room_leave(ws, user.room, user)
             await exit.run_on_exit(ws, user)
 
             if exit.entry == None: raise ClientEx("This exit lead nowhere.")
 
             user.room = exit.entry
-            await user.room.room_enter(ws, user)
+            await user.room.room_enter(ws, user.room, user)
             await room_service.look_user_room(ws, user)
 
             self.session.commit()
         except ClientEx as e:
             raise ClientEx(e)
-        except:
+        except Exception as e:
+            print(e)
+            traceback.print_exc()
             self.session.rollback()
 
 character_service = CharacterService()
