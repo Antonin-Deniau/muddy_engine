@@ -16,11 +16,13 @@ from entities.script_to_exit import ScriptToExit
 from cmud.cmud import exec, create_blank_env, load_str
 
 
+loop = asyncio.get_event_loop()
+
 # Non blocking events
 def wait_queue(future, x):
     future.set_result(x.get())
 
-async def wait_for_event(loop):
+async def wait_for_event():
     future = loop.create_future()
 
     loop.call_soon(wait_queue, future, q)
@@ -69,9 +71,8 @@ class Script(Base):
             p = multiprocessing.Process(target=self.hooks.run_on_exit, args=(tools, char,))
             p.start()
 
-            loop = asyncio.get_event_loop()
             while True:
-                data = await wait_for_event(loop)
+                data = await wait_for_event()
 
                 print("Entry", data)
                 if data == None:
