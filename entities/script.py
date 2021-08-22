@@ -28,6 +28,7 @@ class Script(Base):
         rt = LuaRuntime(unpack_returned_tuples=True)
         fncs = rt.eval(self.code)
         if run != None:
+            pass
 
     def run_in_room_enter(self):
         pass
@@ -41,8 +42,8 @@ class Script(Base):
     def run_on_use(self, char, cmd):
         pass
 
-function run_on_char(char, cmd)
-            return fncs.run_in_room(ws, name)
+    def run_on_char(char, cmd):
+        pass
 
 def on_load(target, context):
     rt = LuaRuntime(unpack_returned_tuples=True)
