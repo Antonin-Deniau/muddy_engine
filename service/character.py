@@ -33,13 +33,17 @@ class CharacterService:
 
     async def move_character(self, ws, user, data):
         args = data["content"]
-        exit = self.session.query(Exit).filter(Exit.id == args[0]).one_or_none()
+        exit = self.session.query(Exit).filter(
+                Exit.exit_id == user.room_id,
+                Exit.id == args[0]).one_or_none()
+
         if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
 
         try:
             await user.room.room_exit(ws, user)
             await exit.run_in_exit(ws, user)
 
+            print(exit.name, exit.desc, exit.exit, exit.entry)
             if exit.entry == None: raise ClientEx("This exit lead nowhere.")
 
             user.room = exit.entry
@@ -51,6 +55,5 @@ class CharacterService:
             raise ClientEx(e)
         except:
             self.session.rollback()
-        
 
 character_service = CharacterService()

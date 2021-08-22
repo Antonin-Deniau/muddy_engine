@@ -33,7 +33,7 @@ class RoomService():
         room = char.room
         await prn(ws, room.desc)
         for exit in room.exits:
-            await prn(ws, "{} (Exit: #{})".format(exit.desc or exit.name or "exit", exit.id))
+            await prn(ws, "{} (Exit: {})".format(exit.desc or exit.name or "exit", exit.id))
         # Add players
 
     def init(self):

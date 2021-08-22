@@ -35,7 +35,9 @@ command_regex = re.compile(r'(?:(?:(?:[^ "\\]|\\.)+)|"(?:[^\\"]|\\.)+")', re.IGN
 
 def split_command(data):
     word_list = re.findall(command_regex, data)
-    return [slash_regex.sub(r"\1", word) for word in word_list]
+    word_list = [slash_regex.sub(r"\1", word) for word in word_list]
+    word_list = [word[1:-1] if word[0] == '"' else word for word in word_list]
+    return word_list
 
 async def upload_script(ws, cmd):
     if len(cmd) != 2: return print("Invalid arguments: /upload <id> <filepath>")

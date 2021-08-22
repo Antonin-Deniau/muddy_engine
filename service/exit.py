@@ -22,15 +22,15 @@ class ExitService:
 
         if key == "name":
             exit.name = value
-        elif key == "exit_id":
+        elif key == "entry_id":
             room = self.session.query(Room).filter(Room.id == value).one_or_none()
-            if room == None: raise ClientEx("Exit room not found with id: {}".format(id))
+            if room == None: raise ClientEx("Entry for room not found with id: {}".format(id))
 
-            exit.exit = room
+            exit.entry = room
         elif key == "desc":
             exit.desc = value
         else:
-            raise ClientEx("Invalid property: {} (Available: name, exit_id, desc)".format(key))
+            raise ClientEx("Invalid property: {} (Available: name, entry_id, desc)".format(key))
 
         self.session.commit()
 
