@@ -9,7 +9,6 @@ class RoomService():
         self.session = session
 
     def create(self, char, name):
-        print(char, name)
         room = Room(name=name, owner=char)
 
         self.session.add(room)
@@ -31,9 +30,11 @@ class RoomService():
         self.session.commit()
 
     async def look_user_room(self, ws, char):
-        await prn(ws, char.room.desc)
+        room = char.room
+        await prn(ws, room.desc)
+        for exit in room.exits:
+            await prn(ws, "{} (Exit: #{})".format(exit.desc or exit.name or "exit", exit.id))
         # Add players
-        # Add exits
 
     def init(self):
         if self.session.query(Room).count() == 0:

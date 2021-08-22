@@ -9,7 +9,7 @@ class ExitService:
         self.session = session
 
     def create(self, char, name):
-        exit = Exit(name=name, owner=char, entry=char.room)
+        exit = Exit(name=name, owner=char, exit=char.room)
 
         self.session.add(exit)
         self.session.commit()

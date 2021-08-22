@@ -3,6 +3,7 @@ from core.persist import session
 from entities.room import Room
 from entities.exit import Exit
 from entities.character import Character
+from core.exceptions import ClientEx
 
 
 from service.room import room_service
@@ -32,19 +33,22 @@ class CharacterService:
 
     async def move_character(self, ws, user, data):
         args = data["content"]
+        exit = self.session.query(Exit).filter(Exit.id == args[0]).one_or_none()
+        if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
 
         try:
-            exit = self.session.query(Exit).filter(Exit.id == args[0]).one_or_none()
-            if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
-            
             await user.room.room_exit(ws, user)
             await exit.run_in_exit(ws, user)
 
-            user.room = exit.exit
+            if exit.entry == None: raise ClientEx("This exit lead nowhere.")
+
+            user.room = exit.entry
             await user.room.room_enter(ws, user)
             await room_service.look_user_room(ws, user)
 
             self.session.commit()
+        except ClientEx as e:
+            raise ClientEx(e)
         except:
             self.session.rollback()
         

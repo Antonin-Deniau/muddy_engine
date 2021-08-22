@@ -44,7 +44,7 @@ async def main(ws, path):
 
     user = await auth_interface(ws)
     char = await manage_character(ws, user)
-    await char.room.room_enter(ws, char)
+    await room_service.look_user_room(ws, char)
 
     action = None
     while True:
