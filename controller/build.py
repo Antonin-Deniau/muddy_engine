@@ -30,7 +30,6 @@ async def build_list(ws, char, data):
             for exit in char.exits:
                 await prn(ws, "\t- [#{}] {}".format(exit.id, exit.name))
         elif args[0] == "script":
-
             await prn(ws, "Owned scripts:")
             for script in char.scripts:
                 await prn(ws, "\t- [#{}] {}".format(script.id, script.name))

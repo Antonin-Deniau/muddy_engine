@@ -1,4 +1,6 @@
 from functools import partial
+import traceback
+
 
 from core.utils import prn
 from core.persist import Base
@@ -66,6 +68,7 @@ def on_load(target, context):
         try:
             target.hooks = exec("(do " + target.code.decode("utf-8") + "\n)", env)
         except Exception as e:
+            traceback.print_exc()
             print(e)
             target.error = str(e)
             target.hooks = None

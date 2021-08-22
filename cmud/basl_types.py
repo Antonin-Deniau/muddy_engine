@@ -1,7 +1,6 @@
 class Name:
-    def __init__(self, name, file=None, line=None, col=None):
+    def __init__(self, name, line=None, col=None):
         self.name = name
-        self.file = file
         self.line = line
         self.col = col
 
@@ -15,8 +14,10 @@ class Name:
         return self.name == a
 
 class Keyword:
-    def __init__(self, name):
+    def __init__(self, name, line=None, col=None):
         self.name = name
+        self.line = line
+        self.col = col
 
     def __hash__(self):
         return hash(self.name)

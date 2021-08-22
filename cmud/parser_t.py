@@ -109,7 +109,7 @@ class ToAst(Transformer):
     variadic = lambda _,x: Name("&")
     number = lambda _,x: float(x[0].value) if x[0].value.find(".") != -1 else int(x[0].value)
     boolean = lambda _,x: x[0] == "true"
-    name = lambda self,x: Name(x[0].value, self.f, x[0].line, x[0].column)
+    name = lambda self,x: Name(x[0].value, x[0].line, x[0].column)
     string = lambda _, x: unescape(x[0][1:-1])
     deref = lambda _,x: tuple([Name("deref"), *x])
     hashmap = lambda _,x: { i[0]: i[1] for i in zip(list(x[::2]), list(x[1::2])) }
