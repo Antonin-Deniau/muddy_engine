@@ -1,7 +1,7 @@
-from core import ns
-from parser_t import parse
-from eval_core import evl
-from environment import Env
+from cmud.core import ns
+from cmud.parser_t import parse
+from cmud.eval_core import evl
+from cmud.environment import Env
 
 def read(e):
     return parse(e)

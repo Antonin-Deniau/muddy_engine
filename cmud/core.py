@@ -1,9 +1,9 @@
 from functools import reduce
 import base64, time, types, re
-
-from parser_t import display, parse
 from lark import UnexpectedInput, UnexpectedToken
-from basl_types import Name, Atom, Fn, BaslException, Keyword
+
+from cmud.parser_t import display, parse
+from cmud.basl_types import Name, Atom, Fn, BaslException, Keyword
 
 def read_string(a):
     try: 

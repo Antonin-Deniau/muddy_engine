@@ -47,7 +47,7 @@ class Script(Base):
             char = { "name": user.name, "id": user.id }
 
             return await self.hooks.run_in_exit(tools, char)
-        else
+        else:
             return True
 
     async def run_on_use(self, char, cmd):

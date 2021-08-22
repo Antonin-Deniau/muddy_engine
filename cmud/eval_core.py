@@ -1,9 +1,9 @@
 from functools import reduce
 import types, traceback
 
-from basl_types import Fn, Name, BaslException, Keyword, Atom
-from parser_t import display
-from environment import Env
+from cmud.basl_types import Fn, Name, BaslException, Keyword, Atom
+from cmud.parser_t import display
+from cmud.environment import Env
 
 
 stack = []

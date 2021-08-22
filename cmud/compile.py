@@ -2,7 +2,7 @@
 import types, json, sys, re
 from lark import Lark, Transformer, Token
 from lark import UnexpectedInput, UnexpectedToken
-from basl_types import Name, Keyword, Fn, Atom, BaslException
+from cmud.basl_types import Name, Keyword, Fn, Atom, BaslException
 
 rules=r'''
 ?start: obj |
@@ -157,30 +157,4 @@ def serialise_list():
 
 def serialise_number():
     pass
-
-data = parse("(do {})".format(open(sys.argv[1]).read()))
-
-search_name(data)
-search_symbol(data)
-
-
-print(len(name_dict))
-print(len(symbol_dict))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

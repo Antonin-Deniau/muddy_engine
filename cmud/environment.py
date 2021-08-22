@@ -1,4 +1,4 @@
-from basl_types import Name, BaslException
+from cmud.basl_types import Name, BaslException
 
 class Env:
     def __init__(self, outer, binds, exprs, new_trace=None):

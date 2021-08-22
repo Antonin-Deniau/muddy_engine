@@ -2,7 +2,8 @@
 import types, json, sys, re
 from lark import Lark, Transformer, Token
 from lark import UnexpectedInput, UnexpectedToken
-from basl_types import Name, Keyword, Fn, Atom, BaslException
+
+from cmud.basl_types import Name, Keyword, Fn, Atom, BaslException
 
 rules=r'''
 ?start: obj |
