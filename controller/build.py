@@ -10,6 +10,7 @@ async def build(ws, char, data):
     if data["type"] == "chown":  pass
     if data["type"] == "chmod":  pass
     if data["type"] == "delete": pass
+    if data["type"] == "eval":   pass
     if data["type"] == "list":   await build_list(ws, char, data)
     if data["type"] == "create": await build_create(ws, char, data)
     if data["type"] == "set":    await build_set(ws, char, data)

@@ -15,3 +15,7 @@ def create_blank_env():
     repl_env = Env(None, [], [])
     for k, v in ns.items():
         repl_env.set(k, v)
+
+def load_str(e, env):
+    b = read(e)
+    evl(b, env)
