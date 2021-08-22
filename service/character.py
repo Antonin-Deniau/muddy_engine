@@ -40,8 +40,8 @@ class CharacterService:
         if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
 
         try:
-            await user.room.room_exit(ws, user)
-            await exit.run_in_exit(ws, user)
+            await user.room.room_leave(ws, user)
+            await exit.run_on_exit(ws, user)
 
             if exit.entry == None: raise ClientEx("This exit lead nowhere.")
 

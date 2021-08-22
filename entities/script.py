@@ -29,26 +29,20 @@ class Script(Base):
     rooms = relationship('Room', secondary = 'script_to_room')
     exits = relationship('Exit', secondary = 'script_to_exit')
 
-    async def run_in_room(self, ws, name):
-        rt = LuaRuntime(unpack_returned_tuples=True)
-        fncs = rt.eval(self.code)
-        if run != None:
-            pass
-
-    async def run_in_room_enter(self):
+    async def run_on_room_enter(self):
         pass
 
-    async def run_in_room_leave(self, room, char):
+    async def run_on_room_leave(self, room, char):
         pass
 
-    async def run_in_exit(self, ws, user, room_origin, room_dest):
-        if self.hooks and hasattr(self.hooks, 'run_in_exit'):
+    async def run_on_exit(self, ws, user, room_origin, room_dest):
+        if self.hooks and hasattr(self.hooks, 'run_on_exit'):
             tools = { 
                     "echo": partial(prn, ws),
             }
             char = { "name": user.name, "id": user.id }
 
-            return await self.hooks.run_in_exit(tools, char)
+            return await self.hooks.run_on_exit(tools, char)
         else:
             return True
 

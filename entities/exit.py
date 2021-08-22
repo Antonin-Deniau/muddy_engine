@@ -22,7 +22,7 @@ class Exit(Base):
     name = Column(String)
 
     # Hooks
-    async def run_in_exit(self, ws, char):
+    async def run_on_exit(self, ws, char):
         for script in self.scripts:
-            script.run_in_exit(ws, char, room)
+            script.run_on_exit(ws, char, room)
 

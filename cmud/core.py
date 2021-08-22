@@ -22,14 +22,6 @@ def regex_match(reg, text):
     else:
         return None
 
-def prn(*a):
-    print(" ".join([display(i, True) for i in a]))
-    return None
-
-def println(*a):
-    print(" ".join([display(i, False) for i in a]))
-    return None
-
 def equality(a, b):
     if (type(a) == tuple or type(a) == list) and (type(b) == tuple or type(b) == list):
         if len(a) != len(b): return False
@@ -106,8 +98,6 @@ ns = {
     '>': lambda a, b: a > b,
     'pr-str': pr_str,
     'str': lambda *a: "".join([display(i, False) for i in a]),
-    'prn': prn,
-    'println': println,
     'read-string': read_string,
     'atom': lambda a: Atom(a),
     'atom?': lambda a: isinstance(a, Atom),
