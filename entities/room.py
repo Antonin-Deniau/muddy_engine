@@ -25,14 +25,12 @@ class Room(Base):
     owner_id = Column(Integer, ForeignKey('character.id'))
     owner = relationship("Character", back_populates="rooms", foreign_keys=[owner_id])
 
-
+    # Hooks
     async def room_exit(self, ws, char):
         for script in self.scripts:
             script.run_in_room_exit(ws, char, room)
 
     async def room_enter(self, ws, char):
-        await prn(ws, self.desc)
-
         for script in self.scripts:
             script.run_in_room_enter(ws, char, room)
 

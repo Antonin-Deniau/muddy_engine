@@ -1,6 +1,7 @@
 from core.persist import session
 from entities.room import Room
 
+from core.utils import prn
 from core.exceptions import ClientEx
 
 class RoomService():
@@ -28,6 +29,11 @@ class RoomService():
             raise ClientEx("Invalid property: {} (Available: name, desc)".format(key))
 
         self.session.commit()
+
+    async def look_user_room(self, ws, char):
+        await prn(ws, char.room.desc)
+        # Add players
+        # Add exits
 
     def init(self):
         if self.session.query(Room).count() == 0:

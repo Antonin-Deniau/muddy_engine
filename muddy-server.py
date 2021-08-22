@@ -21,11 +21,13 @@ from core.exceptions import ClientEx
 
 from service.room import room_service
 
+# Auth phase
 from controller.auth import auth_interface
 from controller.character import manage_character
+
+# Commands
 from controller.actions import actions
 from controller.build import build
-from controller.room import room
 from controller.script import script
 from controller.admin import admin
 
@@ -54,7 +56,6 @@ async def main(ws, path):
         try:
             await admin(ws, char, data)
             await build(ws, char, data)
-            await room(ws, char, data)
             await actions(ws, char, data)
             await script(ws, char, data)
 

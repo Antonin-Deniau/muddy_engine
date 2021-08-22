@@ -21,6 +21,7 @@ class Exit(Base):
     desc = Column(String)
     name = Column(String)
 
+    # Hooks
     async def run_in_exit(self, ws, char):
         for script in self.scripts:
             script.run_in_exit(ws, char, room)

@@ -4,6 +4,9 @@ from entities.room import Room
 from entities.exit import Exit
 from entities.character import Character
 
+
+from service.room import room_service
+
 class CharacterService:
     def __init__(self):
         self.session = session
@@ -39,6 +42,7 @@ class CharacterService:
 
             user.room = exit.exit
             await user.room.room_enter(ws, user)
+            await room_service.look_user_room(ws, user)
 
             self.session.commit()
         except:
