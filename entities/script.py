@@ -1,4 +1,5 @@
 from functools import partial
+import multiprocessing
 import traceback
 
 
@@ -37,12 +38,25 @@ class Script(Base):
 
     async def run_on_exit(self, ws, user, room_origin, room_dest):
         if self.hooks and hasattr(self.hooks, 'run_on_exit'):
-            tools = { 
-                    "echo": partial(prn, ws),
-            }
-            char = { "name": user.name, "id": user.id }
+            queue = multiprocessing.Queue()
 
-            return await self.hooks.run_on_exit(tools, char)
+            char = { "name": user.name, "id": user.id }
+            tools = { 
+                "echo": lambda e: queue.put(["echo", e]),
+                "done": lambda: queue.put(["done"]),
+            }
+
+            p = multiprocessing.Process(target=self.hooks.run_on_exit, args=(tools, char,))
+            p.start()
+
+            while True:
+                data = q.get()
+                event = data[0]
+                args = data[1:]
+
+            queue.close()
+            queue.join_thread()
+            p.join()
         else:
             return True
 
