@@ -28,16 +28,28 @@ class Script(Base):
         rt = LuaRuntime(unpack_returned_tuples=True)
         fncs = rt.eval(self.code)
         if run != None:
-            return fncs.run_in_room(ws, name)
 
+    def run_in_room_enter(self):
+        pass
+
+    def run_in_room_leave(self, room, char):
+        pass
+
+    def run_in_exit(self, char, origin, dest):
+        pass
+
+    def run_on_use(self, char, cmd):
+        pass
+
+function run_on_char(char, cmd)
+            return fncs.run_in_room(ws, name)
 
 def on_load(target, context):
     rt = LuaRuntime(unpack_returned_tuples=True)
+    #lua = lupa.LuaRuntime(attribute_handlers=(getter, setter))
     target.hooks = rt.eval(target.code)
 
 event.listen(Script, 'load', on_load)
-
-
 
 """
 getter(obj, attr_name):
@@ -52,15 +64,6 @@ def setter(obj, attr_name, value):
          return
      raise AttributeError(
          'not allowed to write attribute "%s"' % attr_name)
-
-class X(object)
-     yes = 123
-     put = 'abc'
-     noway = 2.1
-
-x = X()
-
-lua = lupa.LuaRuntime(attribute_handlers=(getter, setter))
 """
 
 

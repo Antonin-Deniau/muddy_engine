@@ -16,6 +16,7 @@ from pathlib import Path
 import websockets
 import shlex
 import os
+import path
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
@@ -26,6 +27,21 @@ from core.utils import send_command, read_command
 
 home = Path.home()
 histfile = os.path.abspath(os.path.join(Path.home(), '.muddy_history'))
+
+
+async def upload_script(ws, cmd):
+    if len(cmd) != 2: return print("Invalid arguments: /upload <id> <filepath>")
+
+    cwd = os.getcwd()
+
+    fpath = os.path.join(cwd, cmd[1])
+
+    if path.exists(fpath) and path.isfile(fpath):
+        f = open(fpath, "r")
+        print(f.read())
+    else:
+        print("File does not exist")
+
 
 async def send_inputs(ws):
     session = PromptSession(history=FileHistory(histfile))
@@ -43,7 +59,10 @@ async def send_inputs(ws):
             t = rm_slash[0]
             cmd = rm_slash[1:]
 
-            await send_command(ws, t, cmd)
+            if t == "upload":
+                await upload_script(ws, cmd)
+            else:
+                await send_command(ws, t, cmd)
         else:
             cmd = list(shlex.shlex(raw))
 

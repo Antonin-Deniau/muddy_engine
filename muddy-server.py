@@ -42,7 +42,7 @@ async def main(ws, path):
 
     user = await auth_interface(ws)
     char = await manage_character(ws, user)
-    await char.room.run(ws, char)
+    await char.room.room_enter(ws, char)
 
     action = None
     while True:

@@ -30,16 +30,19 @@ class CharacterService:
     async def move_character(self, ws, user, data):
         args = data["content"]
 
-        exit = self.session.query(Exit).filter(Exit.id == args[0]).one_or_none()
-        if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
+        try:
+            exit = self.session.query(Exit).filter(Exit.id == args[0]).one_or_none()
+            if exit == None: raise ClientEx("Exit {} does not exist".format(args[0]))
+            
+            await user.room.room_exit(ws, user)
+            await exit.run_in_exit(ws, user)
 
-        for script in exit.scripts:
-            pass
-        
-        user.room = exit.exit
-        await user.room.run(ws, user)
+            user.room = exit.exit
+            await user.room.room_enter(ws, user)
 
-        self.session.commit()
+            self.session.commit()
+        except:
+            self.session.rollback()
         
 
 character_service = CharacterService()
