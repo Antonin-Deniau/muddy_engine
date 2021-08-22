@@ -6,8 +6,7 @@ from sqlalchemy.orm import relationship
 from entities.script_to_room import ScriptToRoom
 from entities.script_to_exit import ScriptToExit
 
-import lupa
-from lupa import LuaRuntime
+from cmud import exec, create_blank_env
 
 class Script(Base):
     __tablename__ = 'script'
@@ -30,47 +29,37 @@ class Script(Base):
         if run != None:
             pass
 
-    def run_in_room_enter(self):
+    async def run_in_room_enter(self):
         pass
 
-    def run_in_room_leave(self, room, char):
+    async def run_in_room_leave(self, room, char):
         pass
 
-    def run_in_exit(self, char, origin, dest):
+    async def run_in_exit(self, ws, user, room_origin, room_dest):
+        if self.hooks and hasattr(self.hooks, 'run_in_exit'):
+            tools = { }
+            char = { "name": user.name, "id": user.id }
+
+            return await self.hooks.run_in_exit(tools, char)
+        else
+            return True
+
+    async def run_on_use(self, char, cmd):
         pass
 
-    def run_on_use(self, char, cmd):
-        pass
-
-    def run_on_char(char, cmd):
+    async def run_on_char(char, cmd):
         pass
 
 def on_load(target, context):
-    rt = LuaRuntime(unpack_returned_tuples=True)
-    #lua = lupa.LuaRuntime(attribute_handlers=(getter, setter))
     if target.code:
+        env = create_blank_env()
+
         try:
-            target.hooks = rt.eval(target.code.decode("utf-8"))
+            target.hooks = exec(env, target.code.decode("utf-8"))
         except Exception as e:
             print(e)
             target.error = str(e)
             target.hooks = None
 
 event.listen(Script, 'load', on_load)
-
-"""
-getter(obj, attr_name):
-     if attr_name == 'yes':
-         return getattr(obj, attr_name)
-     raise AttributeError(
-         'not allowed to read attribute "%s"' % attr_name)
-
-def setter(obj, attr_name, value):
-     if attr_name == 'put':
-         setattr(obj, attr_name, value)
-         return
-     raise AttributeError(
-         'not allowed to write attribute "%s"' % attr_name)
-"""
-
 

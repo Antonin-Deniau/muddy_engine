@@ -43,7 +43,6 @@ class CharacterService:
             await user.room.room_exit(ws, user)
             await exit.run_in_exit(ws, user)
 
-            print(exit.name, exit.desc, exit.exit, exit.entry)
             if exit.entry == None: raise ClientEx("This exit lead nowhere.")
 
             user.room = exit.entry
