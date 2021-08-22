@@ -1,5 +1,9 @@
+import base64
+
 from core.persist import Base, session
 from entities.script import Script
+
+from core.exceptions import ClientEx
 
 class ScriptService:
     def __init__(self):
@@ -13,7 +17,7 @@ class ScriptService:
         if key == "name":
             script.name = value
         elif key == "code":
-            script.code = value
+            script.code = base64.b64decode(value)
         else:
             raise ClientEx("Invalid property: {} (Available: name, code)".format(key))
 

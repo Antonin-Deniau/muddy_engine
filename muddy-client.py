@@ -30,12 +30,12 @@ home = Path.home()
 histfile = os.path.abspath(os.path.join(Path.home(), '.muddy_history'))
 
 
+slash_regex = re.compile(r"\\(.)", re.IGNORECASE)
+command_regex = re.compile(r'(?:(?:(?:[^ "\\]|\\.)+)|"(?:[^\\"]|\\.)+")', re.IGNORECASE)
+
 def split_command(data):
-    word_list = re.split(r"("(?:[^\\"]|\\.)+")|([^ "\\]|\\.+)", data)
-
-    return word_list
-
-
+    word_list = re.findall(command_regex, data)
+    return [slash_regex.sub(r"\1", word) for word in word_list]
 
 async def upload_script(ws, cmd):
     if len(cmd) != 2: return print("Invalid arguments: /upload <id> <filepath>")
@@ -45,10 +45,10 @@ async def upload_script(ws, cmd):
     fpath = os.path.join(cwd, cmd[1])
 
     if os.path.exists(fpath) and os.path.isfile(fpath):
-        f = open(fpath, "r")
+        f = open(fpath, "rb")
         content = base64.b64encode(f.read())
 
-        await send_command(ws, "set", ["script", cmd[0], "content", content])
+        await send_command(ws, "set", ["script", cmd[0], "code", content.decode("utf-8")])
     else:
         print("File does not exist")
 

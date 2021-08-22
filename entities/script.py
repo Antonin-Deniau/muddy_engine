@@ -48,7 +48,13 @@ class Script(Base):
 def on_load(target, context):
     rt = LuaRuntime(unpack_returned_tuples=True)
     #lua = lupa.LuaRuntime(attribute_handlers=(getter, setter))
-    target.hooks = rt.eval(target.code)
+    if target.code:
+        try:
+            target.hooks = rt.eval(target.code.decode("utf-8"))
+        except Exception as e:
+            print(e)
+            target.error = str(e)
+            target.hooks = None
 
 event.listen(Script, 'load', on_load)
 
