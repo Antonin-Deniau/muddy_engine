@@ -12,6 +12,9 @@ from sqlalchemy.orm import relationship
 # Many to Many requirements
 from entities.script_to_room import ScriptToRoom
 from entities.script_to_exit import ScriptToExit
+from entities.script_to_object import ScriptToObject
+
+from entities.object import Object # TEMPORARY
 
 from cmud.cmud import exec, create_blank_env, load_str, run_basl_fnc
 from cmud.basl_types import Keyword
@@ -31,12 +34,41 @@ class Script(Base):
 
     rooms = relationship('Room', secondary = 'script_to_room')
     exits = relationship('Exit', secondary = 'script_to_exit')
+    objects = relationship('Object', secondary = 'script_to_object')
 
-    async def run_on_room_enter(self, ws, room, char):
-        pass
+    async def run_on_room_enter(self, ws, user):
+        if self.code == None: return True
+        if not hasattr(self, "hooks"): await self.populate()
 
-    async def run_on_room_leave(self, ws, room, char):
-        pass
+        if self.hooks and 'run_on_room_enter' in self.hooks:
+            char = {
+                Keyword("name"): user.name,
+                Keyword("id"): user.id,
+            }
+            tools = { 
+                Keyword("echo"): lambda e: prn(ws, e),
+            }
+
+            return await run_basl_fnc(self.hooks["run_on_room_enter"], (tools, char))
+        else:
+            return True
+
+    async def run_on_room_leave(self, ws, user):
+        if self.code == None: return True
+        if not hasattr(self, "hooks"): await self.populate()
+
+        if self.hooks and 'run_on_room_leave' in self.hooks:
+            char = {
+                Keyword("name"): user.name,
+                Keyword("id"): user.id,
+            }
+            tools = { 
+                Keyword("echo"): lambda e: prn(ws, e),
+            }
+
+            return await run_basl_fnc(self.hooks["run_on_room_leave"], (tools, char))
+        else:
+            return True
 
     async def run_on_exit(self, ws, user):
         if self.code == None: return True
@@ -55,11 +87,39 @@ class Script(Base):
         else:
             return True
 
-    async def run_on_use(self, char, cmd):
-        pass
+    async def run_on_use(self, user, cmd):
+        if self.code == None: return True
+        if not hasattr(self, "hooks"): await self.populate()
 
-    async def run_on_char(char, cmd):
-        pass
+        if self.hooks and 'run_on_use' in self.hooks:
+            char = {
+                Keyword("name"): user.name,
+                Keyword("id"): user.id,
+            }
+            tools = { 
+                Keyword("echo"): lambda e: prn(ws, e),
+            }
+
+            return await run_basl_fnc(self.hooks["run_on_use"], (tools, char, cmd))
+        else:
+            return True
+
+    async def run_on_char(user, cmd):
+        if self.code == None: return True
+        if not hasattr(self, "hooks"): await self.populate()
+
+        if self.hooks and 'run_on_char' in self.hooks:
+            char = {
+                Keyword("name"): user.name,
+                Keyword("id"): user.id,
+            }
+            tools = { 
+                Keyword("echo"): lambda e: prn(ws, e),
+            }
+
+            return await run_basl_fnc(self.hooks["run_on_char"], (tools, char, cmd))
+        else:
+            return True
 
     async def populate(self):
         if self.code:

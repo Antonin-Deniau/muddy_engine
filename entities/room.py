@@ -26,11 +26,11 @@ class Room(Base):
     owner = relationship("Character", back_populates="rooms", foreign_keys=[owner_id])
 
     # Hooks
-    async def room_leave(self, ws, room, char):
+    async def room_leave(self, ws, char):
         for script in self.scripts:
-            await script.run_on_room_leave(ws, room, char)
+            await script.run_on_room_leave(ws, char)
 
-    async def room_enter(self, ws, room, char):
+    async def room_enter(self, ws, char):
         for script in self.scripts:
-            await script.run_on_room_enter(ws, room, char)
+            await script.run_on_room_enter(ws, char)
 
