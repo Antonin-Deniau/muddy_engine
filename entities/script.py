@@ -13,7 +13,8 @@ from sqlalchemy.orm import relationship
 from entities.script_to_room import ScriptToRoom
 from entities.script_to_exit import ScriptToExit
 
-from cmud.cmud import exec, create_blank_env, load_str
+from cmud.cmud import exec, create_blank_env, load_str, run_basl_fnc
+from cmud.basl_types import Keyword
 
 
 class Script(Base):
@@ -41,13 +42,13 @@ class Script(Base):
         if self.code == None: return True
         if not hasattr(self, "hooks"): await self.populate()
 
-        if self.hooks and hasattr(self.hooks, 'run_on_exit'):
-            char = { "name": user.name, "id": user.id }
+        if self.hooks and 'run_on_exit' in self.hooks:
+            char = { Keyword("name"): user.name, Keyword("id"): user.id }
             tools = { 
-                "echo": lambda e: prn(ws, e),
+                Keyword("echo"): lambda e: prn(ws, e),
             }
 
-            return await self.hooks.run_on_exit(tools, char)
+            return await run_basl_fnc(self.hooks["run_on_exit"], (tools, char))
         else:
             return True
 
@@ -62,7 +63,7 @@ class Script(Base):
             env = create_blank_env()
 
             await load_str("(defmacro! defun (fn* [name args func] `(def! ~name (fn* ~args ~func))))", env)
-            await load_str("(defmacro! # (fn* [tools key & args] `(~key ~tools ~@args)))", env)
+            await load_str("(defmacro! # (fn* [t key & args] `((~key ~t) ~@args)))", env)
 
             try:
                 self.hooks = await exec("(let* [] (do " + self.code.decode("utf-8") + "\n))", env)

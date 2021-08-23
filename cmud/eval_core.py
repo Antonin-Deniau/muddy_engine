@@ -1,5 +1,5 @@
 from functools import reduce
-import types, traceback, asyncio
+import types, traceback, inspect
 
 from cmud.basl_types import Fn, Name, BaslException, Keyword, Atom
 from cmud.parser_t import display
@@ -42,10 +42,10 @@ def is_macro_call(ast, env):
     else:
         return False
 
-def macroexpand(ast, env):
+async def macroexpand(ast, env):
     while is_macro_call(ast, env):
         fnc = env.get(ast[0].name)
-        ast = fnc.fn(*ast[1:])
+        ast = await fnc.fn(*ast[1:])
 
     return ast
 
@@ -56,7 +56,7 @@ async def evl(ast, env):
         if isinstance(ast, tuple):
             if len(ast) == 0: return  ast
 
-            ast = macroexpand(ast, env)
+            ast = await macroexpand(ast, env)
             if not isinstance(ast, tuple): return await eval_ast(ast, env)
 
             if isinstance(ast[0], Keyword):
@@ -104,7 +104,7 @@ async def evl(ast, env):
                     return ast[1]
 
                 if ast[0].name == "macroexpand":
-                    return macroexpand(ast[1], env)
+                    return await macroexpand(ast[1], env)
 
                 if ast[0].name == "quasiquoteexpand":
                     return quasiquote(ast[1])
@@ -153,8 +153,12 @@ async def evl(ast, env):
                 continue
 
             if isinstance(f, types.LambdaType):
-                print(f, args)
-                return f(*args)
+                res = f(*args)
+
+                if inspect.isawaitable(res):
+                    return await res
+                else:
+                    return res
 
         return await eval_ast(ast, env)
 

@@ -40,9 +40,9 @@ def equality(a, b):
 
     return type(a) == type(b) and a == b
 
-def swap(a, b, *c):
+async def swap(a, b, *c):
     if isinstance(b, Fn):
-        return a.reset(b.fn(a.data, *c))
+        return a.reset(await b.fn(a.data, *c))
     else:
         return a.reset(b(a.data, *c))
 
