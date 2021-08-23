@@ -43,7 +43,10 @@ class Script(Base):
         if not hasattr(self, "hooks"): await self.populate()
 
         if self.hooks and 'run_on_exit' in self.hooks:
-            char = { Keyword("name"): user.name, Keyword("id"): user.id }
+            char = {
+                Keyword("name"): user.name,
+                Keyword("id"): user.id,
+            }
             tools = { 
                 Keyword("echo"): lambda e: prn(ws, e),
             }
@@ -66,7 +69,7 @@ class Script(Base):
             await load_str("(defmacro! # (fn* [t key & args] `((~key ~t) ~@args)))", env)
 
             try:
-                self.hooks = await exec("(let* [] (do " + self.code.decode("utf-8") + "\n))", env)
+                self.hooks = await exec("(do " + self.code.decode("utf-8") + "\n)", env)
             except Exception as e:
                 traceback.print_exc()
                 print(e)
