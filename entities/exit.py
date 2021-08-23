@@ -24,5 +24,5 @@ class Exit(Base):
     # Hooks
     async def run_on_exit(self, ws, char):
         for script in self.scripts:
-            await script.run_on_exit(ws, char, room)
+            await script.run_on_exit(ws, char)
 

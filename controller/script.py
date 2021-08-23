@@ -19,8 +19,6 @@ async def attach(ws, user, data):
 
     args = data["content"]
 
-    if args[1] == "room":
-        script_service.attach_script(user, args[0], args[1], args[2])
-        await prn(ws, "Script attached to {} with id {}".format(args[1], args[2]))
-    else:
-        raise ClientEx("Invalid arguments: /attach_script script_id [room|exit|object] target_id")
+    script_service.attach_script(user, args[0], args[1], args[2])
+    await prn(ws, "Script attached to {} with id {}".format(args[1], args[2]))
+

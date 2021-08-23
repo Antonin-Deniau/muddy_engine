@@ -16,20 +16,6 @@ from entities.script_to_exit import ScriptToExit
 from cmud.cmud import exec, create_blank_env, load_str
 
 
-loop = asyncio.get_event_loop()
-
-# Non blocking events
-def wait_queue(future, x):
-    future.set_result(x.get())
-
-async def wait_for_event():
-    future = loop.create_future()
-
-    loop.call_soon(wait_queue, future, q)
-
-    return await future
-
-
 class Script(Base):
     __tablename__ = 'script'
 
@@ -51,47 +37,17 @@ class Script(Base):
     async def run_on_room_leave(self, ws, room, char):
         pass
 
-    async def run_on_exit(self, ws, user, room_origin, room_dest):
-        print("MAY SCRIPT")
+    async def run_on_exit(self, ws, user):
         if self.code == None: return True
-        if self.hooks == None: self.populate()
+        if not hasattr(self, "hooks"): await self.populate()
 
-        print("MAY TRIGGER SCRIPT")
         if self.hooks and hasattr(self.hooks, 'run_on_exit'):
-            print("TRIGGER SCRIPT")
-            queue = multiprocessing.Queue()
-
             char = { "name": user.name, "id": user.id }
             tools = { 
-                "echo": lambda e: queue.put(["echo", e]),
-                "done": lambda e=True: queue.put(["done", e]),
+                "echo": lambda e: prn(ws, e),
             }
 
-
-            p = multiprocessing.Process(target=self.hooks.run_on_exit, args=(tools, char,))
-            p.start()
-
-            while True:
-                data = await wait_for_event()
-
-                print("Entry", data)
-                if data == None:
-                    print("Returning true")
-                    return True
-
-                event = data[0]
-                args = data[1:]
-
-                if event == "echo":
-                    await prn(ws, args[0])
-                if event == "done":
-                    print("Returning res")
-                    return args[0]
-
-            queue.close()
-            queue.join_thread()
-            p.join()
-            return True
+            return await self.hooks.run_on_exit(tools, char)
         else:
             return True
 
@@ -101,19 +57,15 @@ class Script(Base):
     async def run_on_char(char, cmd):
         pass
 
-    def populate(self):
+    async def populate(self):
         if self.code:
             env = create_blank_env()
 
-            load_str("(defmacro! defun (fn* [name args func] `(def! ~name (fn* ~args ~func))))", env)
-            load_str("(defmacro! # (fn* [tools key & args] `(~key ~tools ~@args)))", env)
+            await load_str("(defmacro! defun (fn* [name args func] `(def! ~name (fn* ~args ~func))))", env)
+            await load_str("(defmacro! # (fn* [tools key & args] `(~key ~tools ~@args)))", env)
 
             try:
-                self.hooks = exec("(do " + self.code.decode("utf-8") + "\n)", env)
-                print("POPULATED HOOKS")
-                print("POPULATED HOOKS")
-                print("POPULATED HOOKS")
-                print("POPULATED HOOKS")
+                self.hooks = await exec("(let* [] (do " + self.code.decode("utf-8") + "\n))", env)
             except Exception as e:
                 traceback.print_exc()
                 print(e)

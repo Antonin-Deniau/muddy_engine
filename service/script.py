@@ -5,6 +5,7 @@ from entities.script import Script
 
 from core.exceptions import ClientEx
 from entities.room import Room
+from entities.exit import Exit
 
 class ScriptService:
     def __init__(self):
@@ -34,8 +35,14 @@ class ScriptService:
 
             script.rooms.append(room)
             self.session.commit()
+        if target_type == "exit":
+            exit = self.session.query(Exit).filter(Exit.id == target_id).one_or_none()
+            if exit == None: raise ClientEx("Exit not found with id: {}".format(target_id))
+
+            script.exits.append(exit)
+            self.session.commit()
         else:
-            raise ClientEx("Invalid target {} (Available: room)".format(target_type))
+            raise ClientEx("Invalid target {} (Available: room, exit)".format(target_type))
         
 
     def create(self, char, name):

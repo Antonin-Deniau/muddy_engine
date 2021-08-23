@@ -1,12 +1,11 @@
 from functools import reduce
-import types, traceback
+import types, traceback, asyncio
 
 from cmud.basl_types import Fn, Name, BaslException, Keyword, Atom
 from cmud.parser_t import display
 from cmud.environment import Env
 
 
-stack = []
 ### SYMBOLS ###
 
 def quasiquote_process_list(ast):
@@ -52,28 +51,25 @@ def macroexpand(ast, env):
 
 ### EVAL PART ###
 
-def evl(ast, env):
-    global stack
-    #print(ast)
+async def evl(ast, env):
     while True:
-        #print(ast)
         if isinstance(ast, tuple):
             if len(ast) == 0: return  ast
 
             ast = macroexpand(ast, env)
-            if not isinstance(ast, tuple): return eval_ast(ast, env)
+            if not isinstance(ast, tuple): return await eval_ast(ast, env)
 
             if isinstance(ast[0], Keyword):
-                hm = evl(ast[1], env)
+                hm = await evl(ast[1], env)
                 return hm[ast[0].name]
 
             if isinstance(ast[0], Name):
                 if ast[0].name == "def!":
-                    value = evl(ast[2], env)
+                    value = await evl(ast[2], env)
                     return env.set(ast[1].name, value)
 
                 if ast[0].name == "defmacro!":
-                    value = evl(ast[2], env)
+                    value = await evl(ast[2], env)
                     value.is_macro = True
                     return env.set(ast[1].name, value)
 
@@ -82,27 +78,27 @@ def evl(ast, env):
                     binding_list = ast[1]
 
                     for i in zip(binding_list[::2], binding_list[1::2]):
-                        data = evl(i[1], new_env)
+                        data = await evl(i[1], new_env)
                         new_env.set(i[0], data)
 
                     ast, env = ast[2], new_env; continue
 
                 if ast[0].name == "try*":
                     if len(ast) < 3:
-                        return evl(ast[1], env)
+                        return await evl(ast[1], env)
 
                     try:
-                        return evl(ast[1], env)
+                        return await evl(ast[1], env)
                     except BaslException as e:
                         new_env = Env(env, [ast[2][1].name], [e])
-                        return evl(ast[2][2], new_env)
+                        return await evl(ast[2][2], new_env)
                     except Exception as e:
                         new_env = Env(env, [ast[2][1].name], [str(e)])
-                        return evl(ast[2][2], new_env)
+                        return await evl(ast[2][2], new_env)
 
                 if ast[0].name == "raise":
                     s = "{}:{}".format(ast[0].name, ast[0].line) if isinstance(ast[0], Name) else "LAMBDA<" + ast[0] + ">"
-                    raise BaslException(evl(ast[1], env), [*env.stack, s])
+                    raise BaslException(await evl(ast[1], env), [*env.stack, s])
 
                 if ast[0].name == "quote":
                     return ast[1]
@@ -119,12 +115,12 @@ def evl(ast, env):
                 if ast[0].name == "do":
                     res = None
                     for x in ast[1:-1]:
-                        res = evl(x, env)
+                        res = await evl(x, env)
                     ast = ast[-1]; continue
 
                 if ast[0].name == "if":
                     if len(ast) < 3: ast, env = None, env; continue
-                    res_cond = evl(ast[1], env)
+                    res_cond = await evl(ast[1], env)
 
                     if type(res_cond) == bool and res_cond == True: ast = ast[2]; continue
                     if type(res_cond) == int: ast = ast[2]; continue
@@ -144,10 +140,12 @@ def evl(ast, env):
                     body = ast[2]
                     params = ast[1]
 
-                    func = lambda *e: evl(body, Env(env, params, e))
+                    async def func(*e):
+                        return await evl(body, Env(env, params, e))
+
                     return Fn(body, params, env, func)
 
-            [f, *args] = eval_ast(ast, env)
+            [f, *args] = await eval_ast(ast, env)
 
             if isinstance(f, Fn):
                 s = "{}:{}:{}".format(ast[0].name, ast[0].line) if isinstance(ast[0], Name) else "LAMBDA<" + display(ast[0], True) + ">"
@@ -155,21 +153,22 @@ def evl(ast, env):
                 continue
 
             if isinstance(f, types.LambdaType):
+                print(f, args)
                 return f(*args)
 
-        return eval_ast(ast, env)
+        return await eval_ast(ast, env)
 
-def eval_ast(ast, env):
+async def eval_ast(ast, env):
     if isinstance(ast, dict):
-        return { k: evl(v, env) for k,v in ast.items() }
+        return { k: await evl(v, env) for k,v in ast.items() }
 
     if isinstance(ast, Name):
         return env.get(ast.name)
 
     if isinstance(ast, list):
-        return list([evl(a, env) for a in ast])
+        return list([await evl(a, env) for a in ast])
 
     if isinstance(ast, tuple):
-        return tuple([evl(x, env) for x in ast])
+        return tuple([await evl(x, env) for x in ast])
 
     return ast

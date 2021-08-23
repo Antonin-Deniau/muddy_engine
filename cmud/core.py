@@ -75,6 +75,7 @@ def peek(f):
 
 ns = {
     # STREAMS FUNCS
+    'dbg': lambda e: print(e),
     '&&': lambda a,b: a and b,
     '||': lambda a,b: a or b,
     'ord': lambda a: ord(a),
