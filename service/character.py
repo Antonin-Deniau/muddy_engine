@@ -33,6 +33,12 @@ class CharacterService:
 
         return char
 
+    async def list_inventory(self, ws, user):
+        await prn(ws, "Inventory:")
+        for obj in user.inventory:
+            await prn(ws, "\t- [#{}] {}\t({})".format(obj.id, obj.name, obj.desc))
+
+
     async def move_character(self, ws, user, data):
         args = data["content"]
         exit = self.session.query(Exit).filter(

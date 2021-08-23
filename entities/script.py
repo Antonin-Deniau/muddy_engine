@@ -14,8 +14,6 @@ from entities.script_to_room import ScriptToRoom
 from entities.script_to_exit import ScriptToExit
 from entities.script_to_object import ScriptToObject
 
-from entities.object import Object # TEMPORARY
-
 from cmud.cmud import exec, create_blank_env, load_str, run_basl_fnc
 from cmud.basl_types import Keyword
 

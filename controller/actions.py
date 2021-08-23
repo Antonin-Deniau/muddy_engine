@@ -19,7 +19,7 @@ async def actions(ws, user, data):
     if data["type"] == "move":      # Move player to another room
         await character_service.move_character(ws, user, data)
     if data["type"] == "inventory": # Inspect inventory
-        pass
+        await character_service.list_inventory(ws, user)
     if data["type"] == "save":      # Save my character
         pass
     if data["type"] == "look":      # Look around the room
