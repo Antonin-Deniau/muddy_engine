@@ -2,8 +2,8 @@
 
 (defun run_on_exit [tools char]
     (if (= (:id char) 1)
-      (do (# tools :echo "Welcome Antonin !")         true)
-      (do (# tools :echo "You're not allowed here !") false)))
+      (do (# tools :echo (str "Welcome " (:name char) " !")) true)
+      (do (# tools :echo "You're not allowed here !")        false)))
 
 {
   :run_on_room_enter nil
