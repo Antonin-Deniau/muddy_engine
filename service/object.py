@@ -2,7 +2,6 @@ from core.persist import session
 from core.exceptions import ClientEx
 from entities.object import Object
 
-
 class ObjectService:
     def __init__(self):
         self.session = session

@@ -6,6 +6,8 @@ from entities.character import Character
 from core.exceptions import ClientEx
 
 
+from core.utils import prn
+
 
 import traceback
 from service.room import room_service
@@ -36,7 +38,7 @@ class CharacterService:
     async def list_inventory(self, ws, user):
         await prn(ws, "Inventory:")
         for obj in user.inventory:
-            await prn(ws, "\t- [#{}] {}\t({})".format(obj.id, obj.name, obj.desc))
+            await prn(ws, "\t- [#{}] {}\t{}".format(obj.id, obj.name, "" if obj.desc == None else "({})".format(obj.desc)))
 
 
     async def move_character(self, ws, user, data):
