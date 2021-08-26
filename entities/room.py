@@ -34,6 +34,7 @@ class Room(Base):
 
     async def room_enter(self, ws, char):
         self.characters.add(char)
+        print(self.characters)
 
         for script in self.scripts:
             await script.run_on_room_enter(ws, char)

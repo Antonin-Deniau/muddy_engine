@@ -48,6 +48,7 @@ async def main(ws, path):
     ws_conn.add(char, ws)
 
     try:
+        char.room.characters.add(char)
         await room_service.look_user_room(ws, char)
         await room_service.send_message(char.room, "{} walked in.".format(char.name), [char.id])
 

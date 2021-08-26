@@ -37,8 +37,8 @@ class RoomService():
                 conn = ws_conn.get(user)
                 await prn(conn, message)
 
-    async def look_user_room(self, ws, char):
-        room = char.room
+    async def look_user_room(self, ws, user):
+        room = user.room
         await prn(ws, room.desc)
 
         if len(room.exits) != 0:
@@ -47,11 +47,12 @@ class RoomService():
             for exit in room.exits:
                 await prn(ws, "\t{} (Exit: {})".format(exit.desc or exit.name or "exit", exit.id))
 
-        if len(room.characters) != 0:
+        if len(room.characters) != 1:
             await prn(ws, "There is also some peoples here: ")
 
             for char in room.characters:
-                await prn(ws, "\t{}, {}.".format(char.name, char.desc))
+                if char.id != user.id:
+                    await prn(ws, "\t- {} {}.".format(char.name, ", ".format(char.desc) if char.desc else ""))
 
     def init(self):
         if self.session.query(Room).count() == 0:
