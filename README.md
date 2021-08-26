@@ -6,13 +6,13 @@ Muddy engine is a MUD/MUCK like game engine,
 
 ### Features:
 - [x] Multi account and registration
-- [x] Multiplayer support
-- [x] Scripting language support
-- [x] Room and object creation
-- [ ] Combat system
-- [ ] Economic system
-- [ ] Adminitstration system
-- [ ] Web UI
+- [x] Multiplayer support
+- [x] Scripting language support
+- [x] Room and object creation
+- [ ] Combat system
+- [ ] Economic system
+- [ ] Adminitstration system
+- [ ] Web UI
 
 
 ### Script example:
