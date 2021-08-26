@@ -25,4 +25,4 @@ async def actions(ws, user, data):
     if data["type"] == "look":      # Look around the room
         await room_service.look_user_room(ws, user)
     if data["type"] == "say":       # Say something in public
-        await prn(ws, user.name + " just said: " + str(data["content"]))
+        await room_service.send_message(user.room, "[{}]: {}".format(user.name, data["content"]))
