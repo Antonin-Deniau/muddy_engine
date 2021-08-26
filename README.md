@@ -4,6 +4,11 @@ MUDDY ENGINE
 
 Muddy engine is a MUD/MUCK like game engine,
 
+### Setup
+Installing requirements: `pip install -r requirements.txt`
+Running the server: `make server`
+Running the client: `make client`
+
 ### Features:
 - [x] Multi account and registration
 - [x] Multiplayer support
