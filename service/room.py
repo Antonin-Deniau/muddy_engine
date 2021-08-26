@@ -4,6 +4,8 @@ from entities.room import Room
 from core.utils import prn
 from core.exceptions import ClientEx
 
+from service.ws_conn import ws_conn
+
 class RoomService():
     def __init__(self):
         self.session = session
@@ -29,12 +31,27 @@ class RoomService():
 
         self.session.commit()
 
+    async def send_message(self, room, message, except_ids=[]):
+        for user in room.characters:
+            if user.id not in except_ids:
+                conn = ws_conn.get(user)
+                await prn(conn, message)
+
     async def look_user_room(self, ws, char):
         room = char.room
         await prn(ws, room.desc)
-        for exit in room.exits:
-            await prn(ws, "{} (Exit: {})".format(exit.desc or exit.name or "exit", exit.id))
-        # Add players
+
+        if len(room.exits) != 0:
+            await prn(ws, "Destination available: ")
+
+            for exit in room.exits:
+                await prn(ws, "\t{} (Exit: {})".format(exit.desc or exit.name or "exit", exit.id))
+
+        if len(room.characters) != 0:
+            await prn(ws, "There is also some peoples here: ")
+
+            for char in room.characters:
+                await prn(ws, "\t{}, {}.".format(char.name, char.desc))
 
     def init(self):
         if self.session.query(Room).count() == 0:

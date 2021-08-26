@@ -20,6 +20,7 @@ from core.persist import migrate
 from core.exceptions import ClientEx
 
 from service.room import room_service
+from service.ws_conn import ws_conn
 
 # Auth phase
 from controller.auth import auth_interface
@@ -44,23 +45,31 @@ async def main(ws, path):
 
     user = await auth_interface(ws)
     char = await manage_character(ws, user)
-    await room_service.look_user_room(ws, char)
+    ws_conn.add(char, ws)
 
-    action = None
-    while True:
-        data = await read_command(ws)
+    try:
+        await room_service.look_user_room(ws, char)
+        await room_service.send_message(char.room, "{} walked in.".format(char.name), [char.id])
 
-        if data["type"] == "exit": # Exit the server
-            break
-        
-        try:
-            await admin(ws, char, data)
-            await build(ws, char, data)
-            await actions(ws, char, data)
-            await script(ws, char, data)
+        action = None
+        while True:
+            data = await read_command(ws)
 
-        except ClientEx as e:
-            await prn(ws, str(e))
+            if data["type"] == "exit": # Exit the server
+                break
+            
+            try:
+                await admin(ws, char, data)
+                await build(ws, char, data)
+                await actions(ws, char, data)
+                await script(ws, char, data)
+
+            except ClientEx as e:
+                await prn(ws, str(e))
+    finally:
+        ws_conn.remove(char)
+        char.room.characters.remove(char)
+        await room_service.send_message(char.room, "{} disapeared.".format(char.name), [char.id])
 
 
 start_server = websockets.serve(main, args["<host>"], args["<port>"])

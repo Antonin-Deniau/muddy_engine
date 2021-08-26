@@ -15,7 +15,7 @@ class Room(Base):
     desc = Column(String)
     spawn = Column(Boolean)
 
-    characters = relationship("Character", back_populates="room", foreign_keys=[Character.room_id])
+    characters = set()
 
     scripts = relationship('Script', secondary = 'script_to_room')
 
@@ -27,10 +27,14 @@ class Room(Base):
 
     # Hooks
     async def room_leave(self, ws, char):
+        self.characters.remove(char)
+
         for script in self.scripts:
             await script.run_on_room_leave(ws, char)
 
     async def room_enter(self, ws, char):
+        self.characters.add(char)
+
         for script in self.scripts:
             await script.run_on_room_enter(ws, char)
 

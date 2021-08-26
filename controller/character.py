@@ -20,14 +20,14 @@ async def manage_character(ws, user):
                 for char in user.characters:
                     await prn(ws, "\t- {}: {}".format(char.name, char.nick))
 
-                    cmd = await read_command(ws)
+                cmd = await read_command(ws)
 
-                    if cmd["type"] == "create":
-                        await create_character(ws, user, cmd["content"])
-                    elif cmd["type"] == "choose":
-                        return await choose_character(ws, user, cmd["content"])
-                    else:
-                        raise ClientEx("Invalid command")
+                if cmd["type"] == "create":
+                    await create_character(ws, user, cmd["content"])
+                elif cmd["type"] == "choose":
+                    return await choose_character(ws, user, cmd["content"])
+                else:
+                    raise ClientEx("Invalid command")
 
             else:
                 await prn(ws, "Create a character with \"/create <name> <nick>\": ")
