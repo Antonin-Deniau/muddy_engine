@@ -5,6 +5,7 @@ MUDDY ENGINE
 Muddy engine is a MUD/MUCK like game engine,
 
 ### Features:
+
  - [x] Multi account and registration
  - [x] Multiplayer support
  - [x] Scripting language support
@@ -13,6 +14,29 @@ Muddy engine is a MUD/MUCK like game engine,
  - [ ] Economic system
  - [ ] Adminitstration system
  - [ ] Web UI
+
+
+### Script example:
+
+A Muddy script is an implementation of the lisp/clojure language.
+It define hooks to be run on certain MUD events.
+
+```clojure
+; BASE HOOK FILE
+
+(defun run_on_exit [tools char]
+    (if (= (:id char) 1)
+      (do (# tools :echo (str "Welcome " (:name char) " !")) true)
+      (do (# tools :echo "You're not allowed here !")        false)))
+
+{
+  :run_on_room_enter nil
+  :run_on_room_leave nil
+  :run_on_exit run_on_exit
+  :run_on_use nil
+  :run_on_char nil
+}
+```
 
 
 ### Implemented commands:
