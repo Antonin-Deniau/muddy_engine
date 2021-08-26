@@ -14,8 +14,7 @@ Muddy engine is a MUD/MUCK like game engine,
 - [ ] Adminitstration system
 - [ ] Web UI
 
-
-### Script example:
+### Script example:
 
 A Muddy script is an implementation of the lisp/clojure language.
 It define hooks to be run on certain MUD events.
