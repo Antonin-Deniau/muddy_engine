@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Server for the Muddy MUD framework
 Usage:
-  muddy-server [--migrate] <host> <port> <world_folder>
+  muddy-server [--migrate] <host> <port>
   muddy-server -h | --help
   muddy-server --version
 Options:
@@ -9,7 +9,6 @@ Options:
   --version       Show the program version
   <host>          The host of the server
   <port>          The port of the server
-  <world_folder>  The world folder for the game
 """
 from dotenv import load_dotenv
 load_dotenv()
@@ -53,7 +52,7 @@ async def main(ws, path):
     try:
         char.room.characters.add(char)
         await room_service.look_user_room(ws, char)
-        await room_service.send_message(char.room, "{} walked in.".format(char.name), [char.id])
+        await room_service.send_message(char.room, "{} walked in.".format(char.name), [char.id])
 
         action = None
         while True:
@@ -73,7 +72,7 @@ async def main(ws, path):
     finally:
         ws_conn.remove(char)
         char.room.characters.remove(char)
-        await room_service.send_message(char.room, "{} disapeared.".format(char.name), [char.id])
+        await room_service.send_message(char.room, "{} disapeared.".format(char.name), [char.id])
 
 
 start_server = websockets.serve(main, args["<host>"], args["<port>"])

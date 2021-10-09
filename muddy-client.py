@@ -62,7 +62,7 @@ async def upload_script(ws, cmd):
     except Exception as e:
         print(e)
 
-# Process a line to send to server
+# Process a line to send to server
 async def send_line(ws, line):
     if len(line) == 0:
         return
@@ -121,8 +121,6 @@ async def main():
             if data["type"] == "exit":
                 break
 
-            #if data["type"] == "prn":
-            #    if args["--frame"] == "all" or args["--frame"] == data["frame"]:
             print(data["content"])
 
         return True
