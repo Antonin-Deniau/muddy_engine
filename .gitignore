@@ -1,3 +1,6 @@
 __pycache__
 test.db
 init_script.cmd
+script_files/
+.env
+src/node_modules/

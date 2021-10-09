@@ -1,7 +1,5 @@
-from functools import partial
-import multiprocessing
+import os
 import traceback
-
 
 from core.utils import prn
 from core.persist import Base
@@ -25,7 +23,7 @@ class Script(Base):
     name = Column(String)
 
     perms = Column(Integer)
-    code = Column(String)
+    code_uuid = Column(String)
 
     owner_id = Column(Integer, ForeignKey('character.id'))
     owner = relationship("Character", back_populates="scripts")
@@ -35,7 +33,7 @@ class Script(Base):
     objects = relationship('Object', secondary = 'script_to_object')
 
     async def run_on_room_enter(self, ws, user):
-        if self.code == None: return True
+        if self.loaded: return True
         if not hasattr(self, "hooks"): await self.populate()
 
         if self.hooks and 'run_on_room_enter' in self.hooks:
@@ -52,7 +50,7 @@ class Script(Base):
             return True
 
     async def run_on_room_leave(self, ws, user):
-        if self.code == None: return True
+        if self.loaded: return True
         if not hasattr(self, "hooks"): await self.populate()
 
         if self.hooks and 'run_on_room_leave' in self.hooks:
@@ -69,7 +67,7 @@ class Script(Base):
             return True
 
     async def run_on_exit(self, ws, user):
-        if self.code == None: return True
+        if self.loaded: return True
         if not hasattr(self, "hooks"): await self.populate()
 
         if self.hooks and 'run_on_exit' in self.hooks:
@@ -86,7 +84,7 @@ class Script(Base):
             return True
 
     async def run_on_use(self, user, cmd):
-        if self.code == None: return True
+        if self.loaded: return True
         if not hasattr(self, "hooks"): await self.populate()
 
         if self.hooks and 'run_on_use' in self.hooks:
@@ -103,7 +101,7 @@ class Script(Base):
             return True
 
     async def run_on_char(user, cmd):
-        if self.code == None: return True
+        if self.loaded: return True
         if not hasattr(self, "hooks"): await self.populate()
 
         if self.hooks and 'run_on_char' in self.hooks:
@@ -119,15 +117,30 @@ class Script(Base):
         else:
             return True
 
+    def set_code(self, value):
+        script_path = os.path.join(os.environ['SCRIPT_STORAGE_PATH'], self.code_uuid)
+        script_file = open(script_path, mode='a')
+        script_file.write(value)
+        script_file.close()
+
+    def get_code(self):
+        script_path = os.path.join(os.environ['SCRIPT_STORAGE_PATH'], self.code_uuid)
+        if not os.path.isfile(script_path):
+            return None
+
+        script_file = open(script_path, mode='r')
+        script = script_file.read()
+        script_file.close()
+        return script
+
     async def populate(self):
-        if self.code:
+        code = self.get_code()
+
+        if code != None:
             env = create_blank_env()
-
-            await load_str("(defmacro! defun (fn* [name args func] `(def! ~name (fn* ~args ~func))))", env)
-            await load_str("(defmacro! # (fn* [t key & args] `((~key ~t) ~@args)))", env)
-
             try:
-                self.hooks = await exec("(do " + self.code.decode("utf-8") + "\n)", env)
+                self.hooks = await exec("(do " + code + "\n)", env)
+                self.loaded = True
             except Exception as e:
                 traceback.print_exc()
                 print(e)

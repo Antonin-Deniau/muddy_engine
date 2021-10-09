@@ -9,6 +9,9 @@ def read(e):
     return parse(e)
 
 async def exec(e, env):
+    await load_str("(defmacro! defun (fn* [name args func] `(def! ~name (fn* ~args ~func))))", env)
+    await load_str("(defmacro! # (fn* [t key & args] `((~key ~t) ~@args)))", env)
+
     b = read(e)
     c = await evl(b, env)
     return c

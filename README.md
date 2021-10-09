@@ -23,8 +23,8 @@ Running the client: `make client`
 
 ### Script example:
 
-A Muddy script is an implementation of the lisp/clojure language.
-It define hooks to be run on certain MUD events.
+Muddy script is an implementation of the lisp/clojure language.
+Create a script to define hooks to be run on certain MUD events.
 
 ```clojure
 ; BASE HOOK FILE
@@ -44,7 +44,7 @@ It define hooks to be run on certain MUD events.
 ```
 
 
-### Implemented commands:
+### Implemented commands:
 
 ## Auth commands:
  - `register`: Register an account to the mud

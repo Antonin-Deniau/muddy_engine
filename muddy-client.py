@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Connect to a Muddy powered mud server
 Usage:
-  muddy-client cli [--frame=<frame>] [--script=<script>] <url>
+  muddy-client cli [--script=<script>] <url>
   muddy-client -h | --help
   muddy-client --version
 Options:
@@ -9,7 +9,6 @@ Options:
   --version         Show the program version
   --script=<script> Script to run at the start of the connection
   <url>             Url to connect to
-  --frame=<frame>   The frame to attach to [default: all]
 """
 from docopt import docopt
 import asyncio
@@ -122,9 +121,9 @@ async def main():
             if data["type"] == "exit":
                 break
 
-            if data["type"] == "prn":
-                if args["--frame"] == "all" or args["--frame"] == data["frame"]:
-                    print(data["content"])
+            #if data["type"] == "prn":
+            #    if args["--frame"] == "all" or args["--frame"] == data["frame"]:
+            print(data["content"])
 
         return True
 

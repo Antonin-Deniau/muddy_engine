@@ -11,6 +11,9 @@ Options:
   <port>          The port of the server
   <world_folder>  The world folder for the game
 """
+from dotenv import load_dotenv
+load_dotenv()
+
 from docopt import docopt
 import asyncio
 import websockets

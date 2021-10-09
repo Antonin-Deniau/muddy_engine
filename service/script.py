@@ -1,4 +1,5 @@
 import base64
+import uuid
 
 from core.persist import Base, session
 from entities.script import Script
@@ -19,7 +20,7 @@ class ScriptService:
         if key == "name":
             script.name = value
         elif key == "code":
-            script.code = base64.b64decode(value)
+            script.set_code(value)
         else:
             raise ClientEx("Invalid property: {} (Available: name, code)".format(key))
 
@@ -46,11 +47,10 @@ class ScriptService:
         
 
     def create(self, char, name):
-        script = Script(name=name, owner=char)
+        script = Script(name=name, owner=char, code_uuid=uuid.uuid4())
 
         self.session.add(script)
         self.session.commit()
         return script
 
-
-script_service= ScriptService()
+script_service = ScriptService()
